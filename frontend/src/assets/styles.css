@@ -1,0 +1,97 @@
+:root {
+  --pink: #FF8FAB;
+  --pink-light: #FFB5C2;
+  --pink-dark: #E85D8A;
+  --lavender: #D4A5FF;
+  --mint: #A8E6CF;
+  --peach: #FFD3B6;
+  --cream: #FFF0E6;
+  --bg: #FFF8FA;
+  --card: rgba(255, 255, 255, 0.88);
+  --text: #5A3D4A;
+  --text-light: #A88494;
+  --shadow: 0 6px 28px rgba(255, 107, 157, 0.1);
+  --radius: 20px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'ZCOOL KuaiLe', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 90px;
+  overflow-x: hidden;
+}
+
+/* Vant 主题覆盖 */
+:root:root {
+  --van-primary-color: var(--pink);
+  --van-button-primary-background: var(--pink);
+  --van-button-primary-border-color: var(--pink);
+  --van-switch-on-background: var(--pink);
+}
+
+/* 动画 */
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tab-page {
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 浮动装饰 */
+.floating-deco {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.floating-deco .deco {
+  position: absolute;
+  font-size: 22px;
+  animation: floatDeco 10s infinite linear;
+  opacity: 0.2;
+}
+
+@keyframes floatDeco {
+  0% {
+    transform: translateY(100vh) rotate(0deg) scale(0.4);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.2;
+  }
+  85% {
+    opacity: 0.15;
+  }
+  100% {
+    transform: translateY(-15vh) rotate(720deg) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* 卡片样式 */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
