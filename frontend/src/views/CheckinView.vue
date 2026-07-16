@@ -2,9 +2,23 @@
   <div class="checkin-view">
     <!-- 浮动装饰 -->
     <div class="floating-deco">
-      <div class="deco">🌸</div><div class="deco">💕</div><div class="deco">✨</div>
-      <div class="deco">🌷</div><div class="deco">💖</div><div class="deco">🌟</div>
-      <div class="deco">🌺</div><div class="deco">💫</div><div class="deco">🦋</div>
+      <div class="deco heart">❤️</div>
+      <div class="deco">🌸</div>
+      <div class="deco heart">💗</div>
+      <div class="deco">✨</div>
+      <div class="deco heart">💖</div>
+      <div class="deco">🌷</div>
+      <div class="deco heart">💕</div>
+      <div class="deco">🌟</div>
+      <div class="deco heart">💝</div>
+      <div class="deco">🎀</div>
+      <div class="deco heart">❣️</div>
+      <div class="deco">🦋</div>
+      <div class="deco heart">🩷</div>
+      <div class="deco">🌺</div>
+      <div class="deco heart">♥️</div>
+      <div class="deco">💫</div>
+      <div class="deco heart">💓</div>
       <div class="deco">🍭</div>
     </div>
 
@@ -134,24 +148,35 @@ const setMood = async (slotId, mood) => {
   position: fixed; inset: 0; pointer-events: none; z-index: 10; overflow: hidden;
 }
 .floating-deco .deco {
-  position: absolute; animation: floatDeco 12s infinite linear; opacity: 0.3;
+  position: absolute; animation: floatDeco 12s infinite linear; opacity: 0.4;
+}
+.floating-deco .deco.heart {
+  color: #FF4D6A; text-shadow: 0 0 8px rgba(255,77,106,0.4);
 }
 @keyframes floatDeco {
   0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
-  10% { opacity: 0.25; }
-  90% { opacity: 0.2; }
+  10% { opacity: 0.35; }
+  90% { opacity: 0.3; }
   100% { transform: translateY(-15vh) rotate(540deg) scale(1); opacity: 0; }
 }
-.floating-deco .deco:nth-child(1) { left: 5%; animation-duration: 13s; animation-delay: 0s; font-size: 16px; }
-.floating-deco .deco:nth-child(2) { left: 15%; animation-duration: 11s; animation-delay: 2s; font-size: 22px; }
-.floating-deco .deco:nth-child(3) { left: 25%; animation-duration: 14s; animation-delay: 4s; font-size: 14px; }
-.floating-deco .deco:nth-child(4) { left: 38%; animation-duration: 10s; animation-delay: 1s; font-size: 20px; }
-.floating-deco .deco:nth-child(5) { left: 50%; animation-duration: 15s; animation-delay: 3s; font-size: 18px; }
-.floating-deco .deco:nth-child(6) { left: 60%; animation-duration: 12s; animation-delay: 5s; font-size: 20px; }
-.floating-deco .deco:nth-child(7) { left: 70%; animation-duration: 13s; animation-delay: 2s; font-size: 16px; }
-.floating-deco .deco:nth-child(8) { left: 80%; animation-duration: 14s; animation-delay: 0s; font-size: 22px; }
-.floating-deco .deco:nth-child(9) { left: 88%; animation-duration: 10s; animation-delay: 4s; font-size: 14px; }
-.floating-deco .deco:nth-child(10) { left: 95%; animation-duration: 12s; animation-delay: 3s; font-size: 18px; }
+.floating-deco .deco:nth-child(1) { left: 3%; animation-duration: 11s; animation-delay: 0s; font-size: 28px; }
+.floating-deco .deco:nth-child(2) { left: 10%; animation-duration: 13s; animation-delay: 1s; font-size: 20px; }
+.floating-deco .deco:nth-child(3) { left: 18%; animation-duration: 10s; animation-delay: 3s; font-size: 32px; }
+.floating-deco .deco:nth-child(4) { left: 26%; animation-duration: 14s; animation-delay: 0s; font-size: 18px; }
+.floating-deco .deco:nth-child(5) { left: 34%; animation-duration: 12s; animation-delay: 2s; font-size: 30px; }
+.floating-deco .deco:nth-child(6) { left: 42%; animation-duration: 15s; animation-delay: 4s; font-size: 22px; }
+.floating-deco .deco:nth-child(7) { left: 50%; animation-duration: 11s; animation-delay: 1s; font-size: 34px; }
+.floating-deco .deco:nth-child(8) { left: 58%; animation-duration: 13s; animation-delay: 3s; font-size: 18px; }
+.floating-deco .deco:nth-child(9) { left: 65%; animation-duration: 10s; animation-delay: 0s; font-size: 28px; }
+.floating-deco .deco:nth-child(10) { left: 72%; animation-duration: 14s; animation-delay: 2s; font-size: 22px; }
+.floating-deco .deco:nth-child(11) { left: 79%; animation-duration: 12s; animation-delay: 4s; font-size: 30px; }
+.floating-deco .deco:nth-child(12) { left: 86%; animation-duration: 11s; animation-delay: 1s; font-size: 18px; }
+.floating-deco .deco:nth-child(13) { left: 92%; animation-duration: 13s; animation-delay: 3s; font-size: 26px; }
+.floating-deco .deco:nth-child(14) { left: 7%; animation-duration: 15s; animation-delay: 5s; font-size: 20px; }
+.floating-deco .deco:nth-child(15) { left: 46%; animation-duration: 10s; animation-delay: 2s; font-size: 28px; }
+.floating-deco .deco:nth-child(16) { left: 55%; animation-duration: 14s; animation-delay: 0s; font-size: 18px; }
+.floating-deco .deco:nth-child(17) { left: 30%; animation-duration: 12s; animation-delay: 4s; font-size: 32px; }
+.floating-deco .deco:nth-child(18) { left: 68%; animation-duration: 11s; animation-delay: 1s; font-size: 22px; }
 
 .card {
   background: var(--card);
