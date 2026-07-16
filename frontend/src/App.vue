@@ -173,13 +173,20 @@ provide('updateTip', (icon, text) => {
 body {
   font-family: 'ZCOOL KuaiLe', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
   background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 90px;
-  overflow-x: hidden;
+  overflow-x: hidden; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
+html { overflow-y: auto; }
 </style>
 
 <style scoped>
 .floating-deco {
   position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.app {
+  min-height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .floating-deco .deco {
   position: absolute; font-size: 22px; animation: floatDeco 10s infinite linear; opacity: 0.2;
