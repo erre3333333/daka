@@ -121,8 +121,10 @@ const getCheckinTime = (slotId) => {
 }
 
 const doCheckin = async (slotId, status) => {
-  const date = new Date().toISOString().slice(0, 10)
-  await checkinStore.doCheckin({ date, slot_id: slotId, status })
+  const now = new Date()
+  const date = now.toISOString().slice(0, 10)
+  const clickTime = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`
+  await checkinStore.doCheckin({ date, slot_id: slotId, status, created_at: clickTime })
   updateTip('💖', '打卡成功！宝宝真棒 ✨')
   setTimeout(() => {
     const tips = [
@@ -137,7 +139,8 @@ const doCheckin = async (slotId, status) => {
 
 const setMood = async (slotId, mood) => {
   const date = new Date().toISOString().slice(0, 10)
-  await checkinStore.setMood(date, slotId, mood)
+  const checkin = checkinStore.checkins.find(c => c.slot_id === slotId)
+  await checkinStore.setMood(date, slotId, mood, checkin?.created_at)
   const msgs = ['抱抱你 🫂', '放轻松 🍃', '还不错 😊', '真好呀 🥰', '太开心了 🎉']
   updateTip('💖', msgs[mood - 1] || msgs[2])
   setTimeout(() => {

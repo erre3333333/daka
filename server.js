@@ -92,9 +92,10 @@ app.delete('/api/schedules/:id', (req, res) => {
 // Checkins
 app.get('/api/checkins', (req, res) => res.json(queryAll('SELECT id,date,slot_id,status,note,mood,created_at FROM checkins WHERE date=?', [req.query.date || new Date().toISOString().slice(0,10)])))
 app.post('/api/checkins', (req, res) => {
-  const { date, slot_id, status, note, mood } = req.body; const d = date || new Date().toISOString().slice(0,10)
-  run(`INSERT INTO checkins (date,slot_id,status,note,mood) VALUES (?,?,?,?,?) ON CONFLICT(date,slot_id) DO UPDATE SET status=excluded.status,note=excluded.note,mood=excluded.mood`,
-    [d, slot_id, status||'done', note||'', mood||3]); res.json({ ok: true })
+  const { date, slot_id, status, note, mood, created_at } = req.body; const d = date || new Date().toISOString().slice(0,10)
+  const ca = created_at || new Date().toISOString().replace('T', ' ').slice(0, 19)
+  run(`INSERT INTO checkins (date,slot_id,status,note,mood,created_at) VALUES (?,?,?,?,?,?) ON CONFLICT(date,slot_id) DO UPDATE SET status=excluded.status,note=excluded.note,mood=excluded.mood`,
+    [d, slot_id, status||'done', note||'', mood||3, ca]); res.json({ ok: true })
 })
 app.delete('/api/checkins', (req, res) => {
   const { date, slot_id } = req.body; run('DELETE FROM checkins WHERE date=? AND slot_id=?', [date||new Date().toISOString().slice(0,10), slot_id]); res.json({ ok: true })

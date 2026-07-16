@@ -35,14 +35,15 @@ export const useCheckinStore = defineStore('checkin', () => {
     return checkin?.mood || 3
   }
 
-  const setMood = async (date, slotId, mood) => {
+  const setMood = async (date, slotId, mood, created_at) => {
     const checkin = checkins.value.find(c => c.slot_id === slotId)
     if (checkin) {
       await checkinApi.create({
         date,
         slot_id: slotId,
         status: checkin.status,
-        mood
+        mood,
+        created_at: created_at || new Date().toISOString().replace('T', ' ').slice(0, 19)
       })
       await fetchCheckins(date)
     }
