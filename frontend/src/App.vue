@@ -227,7 +227,7 @@ html, body, #app { height: 100%; margin: 0; padding: 0; }
   75% { transform: translateY(-2px) rotate(1deg); }
 }
 .header .greeting {
-  font-size: 16px; opacity: 1; color: #D44E7A; letter-spacing: 1.5px; margin-bottom: 2px;
+  font-size: 20px; opacity: 1; color: #C0396B; letter-spacing: 1.5px; margin-bottom: 2px;
 }
 .header .rate-wrap {
   display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 14px;
