@@ -130,17 +130,15 @@ body {
   font-family: 'ZCOOL KuaiLe', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
   background: linear-gradient(160deg, #FFF0F5 0%, #FFF8FA 30%, #F0E6FF 60%, #E8F5E9 100%);
   background-attachment: fixed;
-  color: var(--text); min-height: 100vh; padding-bottom: 80px;
-  overflow-x: hidden; overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  color: var(--text); height: 100vh; overflow: hidden;
 }
-html, body, #app { height: 100%; }
+html, body, #app { height: 100%; margin: 0; padding: 0; }
 </style>
 
 <style scoped>
 .app {
   display: flex; flex-direction: column;
-  min-height: 100vh;
+  height: 100vh; overflow: hidden;
 }
 
 .header {
@@ -176,7 +174,12 @@ html, body, #app { height: 100%; }
   max-width: 480px; margin: 0 auto; padding: 16px;
   position: relative; z-index: 1;
   width: 100%;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 80px;
+  scrollbar-width: none;
 }
+.container::-webkit-scrollbar { display: none; }
 
 .tip-banner {
   background: linear-gradient(135deg, rgba(255,182,193,0.15), rgba(212,165,255,0.1));
