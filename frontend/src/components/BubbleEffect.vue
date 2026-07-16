@@ -20,7 +20,7 @@ let h = 0
 function rand(a, b) { return a + Math.random() * (b - a) }
 
 function createBubble(overrides = {}) {
-  const r = rand(35, 80)
+  const r = rand(20, 50)
   return {
     x: overrides.x ?? rand(r, w - r),
     y: overrides.y ?? rand(h * 0.3, h + r),
