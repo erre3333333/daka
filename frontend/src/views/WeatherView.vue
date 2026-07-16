@@ -2,22 +2,38 @@
   <div class="weather-view">
     <div class="weather-grid">
       <div class="weather-card" v-for="city in cities" :key="city.id">
-        <div class="city-header">
-          <div class="city-name">{{ city.city }} {{ city.id === 'xian' ? '🏯' : '🧊' }}</div>
-          <div class="city-now">现在</div>
+        <div class="city-header" :class="city.id">
+          <div class="city-name">{{ city.city }}</div>
+          <div class="city-now">实时</div>
         </div>
         <div class="temp-main">
-          <span class="weather-icon">{{ city.emoji }}</span>
-          <div class="temp-num">{{ Math.round(city.temperature) }}<small>°C</small></div>
+          <div class="weather-emoji">{{ city.emoji }}</div>
+          <div class="temp-num">{{ Math.round(city.temperature) }}<small>°</small></div>
           <div class="weather-desc">{{ city.weather_desc }}</div>
           <div class="temp-range" v-if="city.temp_max && city.temp_min">
-            ↑ {{ Math.round(city.temp_max) }}° ↓ {{ Math.round(city.temp_min) }}°
+            <span class="temp-up">↑ {{ Math.round(city.temp_max) }}°</span>
+            <span class="temp-down">↓ {{ Math.round(city.temp_min) }}°</span>
           </div>
         </div>
         <div class="weather-detail">
-          <span>体感<br><span class="val">{{ Math.round(city.apparent_temperature) }}°</span></span>
-          <span>湿度<br><span class="val">{{ city.humidity }}%</span></span>
-          <span>风速<br><span class="val">{{ Math.round(city.wind_speed) }}km/h</span></span>
+          <div class="detail-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" width="16" height="16">
+              <path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/>
+            </svg>
+            <span class="val">{{ Math.round(city.apparent_temperature) }}°</span>
+          </div>
+          <div class="detail-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" width="16" height="16">
+              <path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/>
+            </svg>
+            <span class="val">{{ city.humidity }}%</span>
+          </div>
+          <div class="detail-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1.5" width="16" height="16">
+              <path d="M9.59 4.59A2 2 0 1111 8H2m10.59 11.41A2 2 0 1014 16H2m15.73-8.27A2.5 2.5 0 1119.5 12H2"/>
+            </svg>
+            <span class="val">{{ Math.round(city.wind_speed) }}km/h</span>
+          </div>
         </div>
       </div>
     </div>
@@ -55,40 +71,44 @@ onMounted(fetchWeather)
 </script>
 
 <style scoped>
-.weather-view {
-  min-height: 100vh;
-  background: var(--bg);
-}
+.weather-view { position: relative; }
 
 .weather-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 .weather-card {
-  background: var(--card); backdrop-filter: blur(12px);
+  background: var(--card); backdrop-filter: blur(16px);
   border-radius: var(--radius); box-shadow: var(--shadow);
-  border: 1.5px solid rgba(255,182,193,0.15); overflow: hidden;
-  transition: transform 0.2s;
+  border: 1px solid rgba(248,164,184,0.12); overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.weather-card:active { transform: scale(0.97); }
+.weather-card:active { transform: scale(0.97); box-shadow: var(--shadow-hover); }
 
 .city-header {
   padding: 14px 14px 10px; text-align: center;
-  background: linear-gradient(135deg, rgba(255,182,193,0.15), rgba(212,165,255,0.1));
-  border-bottom: 1px solid rgba(255,182,193,0.1);
+  border-bottom: 1px solid rgba(248,164,184,0.08);
 }
+.city-header.xian { background: linear-gradient(135deg, rgba(248,164,184,0.12), rgba(212,191,255,0.08)); }
+.city-header.harbin { background: linear-gradient(135deg, rgba(184,232,208,0.12), rgba(212,191,255,0.08)); }
 .city-name { font-size: 15px; font-weight: 400; color: var(--text); letter-spacing: 1px; }
 .city-now { font-size: 11px; color: var(--text-light); margin-top: 2px; }
 
-.temp-main { text-align: center; padding: 12px 14px 6px; }
-.weather-icon { font-size: 32px; margin: 4px 0; display: block; }
-.temp-num { font-size: 36px; font-weight: 400; color: var(--text); line-height: 1; }
-.temp-num small { font-size: 16px; color: var(--text-light); }
-.weather-desc { font-size: 13px; color: var(--text-light); margin-top: 4px; }
-.temp-range { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+.temp-main { text-align: center; padding: 16px 14px 8px; }
+.weather-emoji { font-size: 36px; margin-bottom: 4px; }
+.temp-num { font-size: 40px; font-weight: 400; color: var(--text); line-height: 1; }
+.temp-num small { font-size: 18px; color: var(--text-light); }
+.weather-desc { font-size: 13px; color: var(--text-light); margin-top: 6px; }
+.temp-range {
+  display: flex; gap: 10px; justify-content: center; margin-top: 6px; font-size: 12px;
+}
+.temp-up { color: var(--pink); }
+.temp-down { color: var(--lavender); }
 
 .weather-detail {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-  padding: 8px 14px 14px; font-size: 11px; color: var(--text-light);
+  display: flex; justify-content: space-around; padding: 10px 14px 14px;
 }
-.weather-detail span { text-align: center; }
-.weather-detail .val { font-size: 13px; color: var(--text); font-weight: 400; }
+.detail-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  font-size: 11px; color: var(--text-light);
+}
+.detail-item .val { font-size: 13px; color: var(--text); font-weight: 400; }
 </style>
