@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from datetime import datetime
 import aiosqlite
-from ..database import get_db
-from ..models.schemas import CheckinCreate, CheckinDelete
+from database import get_db
+from models.schemas import CheckinCreate, CheckinDelete
 
 router = APIRouter(prefix="/api/checkins", tags=["checkins"])
 
