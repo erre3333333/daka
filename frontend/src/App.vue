@@ -19,8 +19,10 @@
       </div>
       <div class="rate-wrap">
         <div class="tip-text">{{ tipIcon }} {{ tipText }}</div>
-        <span>今日完成</span>
-        <span class="num">{{ completionRate }}%</span>
+        <div class="rate-row">
+          <span>今日完成</span>
+          <span class="num">{{ completionRate }}%</span>
+        </div>
       </div>
     </div>
 
@@ -214,6 +216,7 @@ html { overflow-y: auto; }
   border: 1.5px solid rgba(255,255,255,0.3);
 }
 .header .rate-wrap .tip-text { font-size: 13px; opacity: 0.9; letter-spacing: 1px; }
+.header .rate-wrap .rate-row { display: flex; align-items: center; gap: 8px; }
 .header .rate-wrap .num { font-size: 20px; font-weight: 400; }
 
 .container { max-width: 480px; margin: 0 auto; padding: 16px; position: relative; z-index: 1; }
