@@ -123,6 +123,11 @@ app.post('/api/ai/analyze', (req, res) => {
   res.json({ content: `## 本周规律性报告\n\n过去 ${days} 天共完成 **${done.c}** 次打卡，规律率约 **${rate}%**。\n\n### 建议\n- 试着固定每天的作息时间\n- 睡前 1 小时远离手机\n- 每餐定时定量\n- 每天保持 30 分钟运动` })
 })
 
+// Static files
+if (existsSync(PUBLIC_DIR)) {
+  app.use(express.static(PUBLIC_DIR))
+}
+
 // SPA Fallback
 if (existsSync(PUBLIC_DIR)) {
   app.get('*', (req, res) => { if (!req.path.startsWith('/api')) res.sendFile(join(PUBLIC_DIR, 'index.html')) })
