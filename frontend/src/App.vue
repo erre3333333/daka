@@ -208,10 +208,9 @@ html, body, #app { height: 100%; margin: 0; padding: 0; }
 .header-deco-right { right: 14px; }
 .header .title {
   font-family: 'Liu Jian Mao Cao', 'ZCOOL KuaiLe', cursive;
-  font-size: 26px; font-weight: 400; margin-bottom: 6px; letter-spacing: 2px;
-  background: linear-gradient(135deg, #fff 0%, #FFE4F0 50%, #fff 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  text-shadow: none;
+  font-size: 28px; font-weight: 400; margin-bottom: 6px; letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(255,255,255,0.5), 0 1px 4px rgba(0,0,0,0.1);
   animation: titleBounce 3s ease-in-out infinite;
 }
 @keyframes titleBounce {
