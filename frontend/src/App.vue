@@ -4,7 +4,6 @@
     <div class="header">
       <div class="header-deco-left">✿</div>
       <div class="header-deco-right">❀</div>
-      <div class="title">我最可爱的宝宝</div>
       <div class="greeting">{{ greeting }}</div>
       <div class="rate-wrap">
         <div class="tip-text">{{ tipIcon }} {{ tipText }}</div>
@@ -68,7 +67,11 @@ const now = ref(new Date())
 const activeTab = ref('checkin')
 const tipIcon = ref('🌸')
 const tipText = ref('今天也要元气满满哦！')
-const completionRate = computed(() => checkinStore.completionRate)
+const completionRate = computed(() => {
+  const enabled = scheduleStore.schedules.filter(s => s.enabled !== false).length
+  const done = checkinStore.checkins.filter(c => c.status === 'done').length
+  return enabled > 0 ? Math.round(done / enabled * 100) : 0
+})
 
 const greeting = computed(() => {
   const hour = now.value.getHours()
@@ -188,7 +191,10 @@ html, body, #app { height: 100%; margin: 0; padding: 0; }
   border-radius: 24px; padding: 12px 20px; font-size: 13px;
   border: 1px solid rgba(255,255,255,0.4);
 }
-.header .rate-wrap .tip-text { font-size: 12px; opacity: 0.9; letter-spacing: 0.5px; }
+.header .rate-wrap .tip-text {
+  font-size: 16px; opacity: 1; letter-spacing: 0.5px;
+  color: #4FC3F7; font-weight: 400;
+}
 .header .rate-wrap .rate-row {
   display: flex; align-items: center; gap: 10px; width: 100%;
 }
