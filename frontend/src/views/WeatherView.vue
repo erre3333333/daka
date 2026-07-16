@@ -3,7 +3,7 @@
     <div class="weather-grid">
       <div class="weather-card" v-for="city in cities" :key="city.id">
         <div class="city-header">
-          <div class="city-name">{{ city.name }} {{ city.id === 'xian' ? '🏯' : '🧊' }}</div>
+          <div class="city-name">{{ city.city }} {{ city.id === 'xian' ? '🏯' : '🧊' }}</div>
           <div class="city-now">现在</div>
         </div>
         <div class="temp-main">
