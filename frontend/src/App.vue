@@ -50,6 +50,12 @@
         </svg>
         <span>设置</span>
       </button>
+      <button class="tab tab-exit" @click="exitApp">
+        <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        <span>退出</span>
+      </button>
     </div>
   </div>
 </template>
@@ -150,6 +156,11 @@ onUnmounted(() => {
   if (timer) clearInterval(timer)
 })
 
+const exitApp = () => {
+  window.close()
+  document.body.innerHTML = '<div style="text-align:center;padding:60px;font-size:18px;color:#D44E7A;">再见啦，期待下次见面 💕</div>'
+}
+
 provide('completionRate', completionRate)
 provide('updateTip', (icon, text) => {
   tipIcon.value = icon
@@ -207,11 +218,11 @@ html, body, #app { height: 100%; margin: 0; padding: 0; }
 .header-deco-left { left: 14px; }
 .header-deco-right { right: 14px; }
 .header .title {
-  font-family: 'Liu Jian Mao Cao', 'ZCOOL KuaiLe', cursive;
   font-size: 28px; font-weight: 400; margin-bottom: 6px; letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 0 2px 12px rgba(255,255,255,0.5), 0 1px 4px rgba(0,0,0,0.1);
+  color: #D44E7A;
+  text-shadow: 0 1px 8px rgba(255,255,255,0.6), 0 2px 4px rgba(212,78,122,0.15);
   animation: titleBounce 3s ease-in-out infinite;
+  font-family: 'Liu Jian Mao Cao', 'ZCOOL KuaiLe', 'STKaiti', 'KaiTi', 'SimKai', cursive, serif;
 }
 @keyframes titleBounce {
   0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -283,4 +294,6 @@ html, body, #app { height: 100%; margin: 0; padding: 0; }
 @keyframes tabBounce {
   0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1.05); }
 }
+.tab-exit { color: #E8899E !important; }
+.tab-exit:hover { color: #D44E7A !important; background: rgba(212,78,122,0.08) !important; }
 </style>
