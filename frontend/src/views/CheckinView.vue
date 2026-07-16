@@ -166,7 +166,7 @@ const setMood = async (slotId, mood) => {
 }
 .floating-deco .deco.heart { color: #FF4D6A; text-shadow: 0 0 8px rgba(255,77,106,0.4); }
 .floating-deco .deco.flower { color: #FFB6C1; }
-.floating-deco .deco.snow { color: #B0E0E6; text-shadow: 0 0 6px rgba(176,224,230,0.6); }
+.floating-deco .deco.snow { color: #E8E8E8; text-shadow: 0 0 10px rgba(255,255,255,0.9), 0 0 20px rgba(200,200,220,0.6), 0 0 30px rgba(180,180,200,0.4); }
 
 /* 上升动画 */
 .floating-deco .deco.rise { animation-name: riseUp; }
