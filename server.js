@@ -137,6 +137,67 @@ app.post('/api/ai/analyze', (req, res) => {
   res.json({ content: `## 本周规律性报告\n\n过去 ${days} 天共完成 **${doneCount}** 次打卡，规律率约 **${rate}%**。\n\n### 建议\n- 试着固定每天的作息时间\n- 睡前 1 小时远离手机\n- 每餐定时定量\n- 每天保持 30 分钟运动` })
 })
 
+// Backup trigger - push database to GitHub
+app.post('/api/backup/trigger', async (req, res) => {
+  const GITHUB_TOKEN = process.env.GITHUB_TOKEN
+  const REPO = 'erre3333333/daka'
+  if (!GITHUB_TOKEN) return res.status(500).json({ error: 'GITHUB_TOKEN not configured' })
+  if (!existsSync(DB_PATH)) return res.status(404).json({ error: 'no database' })
+
+  try {
+    const now = new Date()
+    const ts = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`
+    const backupPath = `backup/life-${ts}.db`
+    const dbContent = readFileSync(DB_PATH)
+    const b64 = dbContent.toString('base64')
+
+    const headers = { Authorization: 'token ' + GITHUB_TOKEN, 'User-Agent': 'node', 'Content-Type': 'application/json' }
+
+    // Get current commit and tree
+    const refRes = await fetch(`https://api.github.com/repos/${REPO}/git/refs/heads/main`, { headers })
+    const commitSha = (await refRes.json()).object.sha
+    const commitRes = await fetch(`https://api.github.com/repos/${REPO}/git/commits/${commitSha}`, { headers })
+    const treeSha = (await commitRes.json()).tree.sha
+
+    // Create blob
+    const blobRes = await fetch(`https://api.github.com/repos/${REPO}/git/blobs`, {
+      method: 'POST', headers,
+      body: JSON.stringify({ content: b64, encoding: 'base64' })
+    })
+    const blobSha = (await blobRes.json()).sha
+
+    // Create tree
+    const treeRes = await fetch(`https://api.github.com/repos/${REPO}/git/trees`, {
+      method: 'POST', headers,
+      body: JSON.stringify({
+        base_tree: treeSha,
+        tree: [{ path: backupPath, mode: '100644', type: 'blob', sha: blobSha }]
+      })
+    })
+    const newTree = (await treeRes.json()).sha
+
+    // Create commit
+    const cRes = await fetch(`https://api.github.com/repos/${REPO}/git/commits`, {
+      method: 'POST', headers,
+      body: JSON.stringify({
+        message: `chore: database backup ${now.toISOString().slice(0,10)}`,
+        tree: newTree, parents: [commitSha]
+      })
+    })
+    const newCommit = (await cRes.json()).sha
+
+    // Update ref
+    await fetch(`https://api.github.com/repos/${REPO}/git/refs/heads/main`, {
+      method: 'PATCH', headers,
+      body: JSON.stringify({ sha: newCommit, force: true })
+    })
+
+    res.json({ ok: true, path: backupPath, commit: newCommit.slice(0, 8) })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
 // Static files
 if (existsSync(PUBLIC_DIR)) {
   app.use(express.static(PUBLIC_DIR))

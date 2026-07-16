@@ -44,4 +44,8 @@ export const aiApi = {
   voice: (text) => api.post('/ai/voice', null, { params: { text } })
 }
 
+export const backupApi = {
+  trigger: () => api.post('/backup/trigger')
+}
+
 export default api

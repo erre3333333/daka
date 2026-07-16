@@ -68,12 +68,30 @@
       </button>
       <button class="save-btn" @click="saveAll">保存</button>
     </div>
+
+    <div class="card backup-card">
+      <div class="card-header">
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2">
+          <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        <div>
+          <div class="title">数据备份</div>
+          <div class="subtitle">备份数据库到 GitHub</div>
+        </div>
+      </div>
+      <button class="backup-btn" @click="triggerBackup" :disabled="backupLoading">
+        <span v-if="backupLoading">备份中...</span>
+        <span v-else>📤 备份到 GitHub</span>
+      </button>
+      <div class="backup-msg" v-if="backupMsg">{{ backupMsg }}</div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, inject } from 'vue'
 import { useScheduleStore } from '../stores/schedule'
+import { backupApi } from '../api'
 
 const scheduleStore = useScheduleStore()
 const updateTip = inject('updateTip')
@@ -107,6 +125,23 @@ const addSchedule = async () => {
 }
 
 const saveAll = () => updateTip('💾', '保存成功！')
+
+const backupLoading = ref(false)
+const backupMsg = ref('')
+
+const triggerBackup = async () => {
+  backupLoading.value = true
+  backupMsg.value = ''
+  try {
+    const res = await backupApi.trigger()
+    backupMsg.value = `✅ 备份成功！commit: ${res.commit}`
+    updateTip('📤', '数据库已备份到 GitHub')
+  } catch (e) {
+    const msg = e?.response?.data?.error || e.message
+    backupMsg.value = `❌ 备份失败：${msg}`
+  }
+  backupLoading.value = false
+}
 
 const loadSchedules = async () => {
   await scheduleStore.fetchSchedules()
@@ -209,4 +244,21 @@ onMounted(loadSchedules)
   letter-spacing: 1px;
 }
 .save-btn:active { transform: scale(0.96); }
+
+.backup-card { padding: 0 0 20px; }
+.backup-btn {
+  width: calc(100% - 40px); margin: 0 20px 12px; padding: 13px;
+  border: none; border-radius: 16px; font-family: inherit; font-size: 15px; cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: linear-gradient(135deg, var(--mint), var(--mint-light));
+  color: var(--text); box-shadow: 0 3px 12px rgba(184,232,208,0.3);
+  letter-spacing: 1px;
+}
+.backup-btn:active { transform: scale(0.96); }
+.backup-btn:disabled { opacity: 0.5; }
+.backup-msg {
+  font-size: 12px; line-height: 1.6; margin: 0 20px; padding: 10px 14px;
+  border-radius: 12px; background: rgba(248,164,184,0.06);
+  color: var(--text); word-break: break-all;
+}
 </style>
