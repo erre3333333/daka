@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 import aiosqlite
-from ..database import get_db
-from ..models.schemas import ScheduleCreate, ScheduleUpdate
+from database import get_db
+from models.schemas import ScheduleCreate, ScheduleUpdate
 
 router = APIRouter(prefix="/api/schedules", tags=["schedules"])
 
