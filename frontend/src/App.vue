@@ -2,12 +2,17 @@
   <div class="app">
     <!-- 头部 -->
     <div class="header">
+      <div class="header-deco-left">✿</div>
+      <div class="header-deco-right">❀</div>
       <div class="title">我最可爱的宝宝</div>
       <div class="greeting">{{ greeting }}</div>
       <div class="rate-wrap">
         <div class="tip-text">{{ tipIcon }} {{ tipText }}</div>
         <div class="rate-row">
           <span>今日完成</span>
+          <div class="rate-bar">
+            <div class="rate-fill" :style="{ width: completionRate + '%' }"></div>
+          </div>
           <span class="num">{{ completionRate }}%</span>
         </div>
       </div>
@@ -21,16 +26,29 @@
     <!-- 底部导航 -->
     <div class="toolbar">
       <button class="tab" :class="{ active: activeTab === 'checkin' }" @click="switchTab('checkin')">
-        <span class="tab-icon">📋</span> 今日
+        <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+        </svg>
+        <span>今日</span>
       </button>
       <button class="tab" :class="{ active: activeTab === 'stats' }" @click="switchTab('stats')">
-        <span class="tab-icon">📊</span> 统计
+        <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        <span>统计</span>
       </button>
       <button class="tab" :class="{ active: activeTab === 'weather' }" @click="switchTab('weather')">
-        <span class="tab-icon">🌤</span> 天气
+        <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+        </svg>
+        <span>天气</span>
       </button>
       <button class="tab" :class="{ active: activeTab === 'settings' }" @click="switchTab('settings')">
-        <span class="tab-icon">⚙️</span> 设置
+        <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <span>设置</span>
       </button>
     </div>
   </div>
@@ -48,19 +66,19 @@ const checkinStore = useCheckinStore()
 
 const now = ref(new Date())
 const activeTab = ref('checkin')
-const tipIcon = ref('💪')
+const tipIcon = ref('🌸')
 const tipText = ref('今天也要元气满满哦！')
 const completionRate = computed(() => checkinStore.completionRate)
 
 const greeting = computed(() => {
   const hour = now.value.getHours()
-  if (hour < 6) return '夜深了宝宝，该睡啦 💤'
+  if (hour < 6) return '夜深了，该睡啦 💤'
   if (hour < 9) return '早上好呀 ☀️ 新的一天加油'
-  if (hour < 12) return '上午好宝宝 💕 元气满满'
+  if (hour < 12) return '上午好 💕 元气满满'
   if (hour < 14) return '中午好呀 🍚 记得吃饭'
-  if (hour < 18) return '下午好宝宝 🌸 加油哦'
+  if (hour < 18) return '下午好 🌸 加油哦'
   if (hour < 21) return '傍晚好 💖 放松一下吧'
-  return '晚安宝宝 🌙 要早点休息哦'
+  return '晚安 🌙 要早点休息哦'
 })
 
 const tips = [
@@ -111,24 +129,28 @@ provide('updateTip', (icon, text) => {
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 :root {
-  --pink: #FF8FAB;
-  --pink-light: #FFB5C2;
-  --pink-dark: #E85D8A;
-  --lavender: #D4A5FF;
-  --mint: #A8E6CF;
-  --peach: #FFD3B6;
-  --cream: #FFF0E6;
-  --bg: #FFF8FA;
-  --card: rgba(255,255,255,0.88);
+  --pink: #F8A4B8;
+  --pink-light: #FFD6E0;
+  --pink-dark: #E8899E;
+  --lavender: #D4BFFF;
+  --lavender-light: #EDE4FF;
+  --mint: #B8E8D0;
+  --mint-light: #E0F5EB;
+  --peach: #FFD4B8;
+  --peach-light: #FFE8D8;
+  --cream: #FFF5EC;
+  --bg: #FFF9FB;
+  --card: rgba(255,255,255,0.92);
   --text: #5A3D4A;
-  --text-light: #A88494;
-  --shadow: 0 6px 28px rgba(255,107,157,0.1);
-  --radius: 20px;
+  --text-light: #B8929E;
+  --shadow: 0 4px 20px rgba(248,164,184,0.12);
+  --shadow-hover: 0 8px 32px rgba(248,164,184,0.18);
+  --radius: 22px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 body {
   font-family: 'ZCOOL KuaiLe', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
-  background: linear-gradient(160deg, #FFF0F5 0%, #FFF8FA 30%, #F0E6FF 60%, #E8F5E9 100%);
+  background: linear-gradient(170deg, #FFF5F7 0%, #FFF0F5 25%, #F8F0FF 50%, #F0F8F4 75%, #FFF8F0 100%);
   background-attachment: fixed;
   color: var(--text); height: 100vh; overflow: hidden;
 }
@@ -143,31 +165,46 @@ html, body, #app { height: 100%; margin: 0; padding: 0; }
 
 .header {
   flex-shrink: 0;
+  background: linear-gradient(135deg, #FFD6E0 0%, #F8A4B8 25%, #D4BFFF 55%, #B8E8D0 85%, #FFD4B8 100%);
+  color: #fff; padding: 32px 20px 28px; text-align: center; position: relative; z-index: 1;
+  border-radius: 0 0 32px 32px;
+  box-shadow: 0 8px 32px rgba(248,164,184,0.25);
 }
-
-.header {
-  background: linear-gradient(135deg, #FFB5C2 0%, #FF8FAB 30%, #D4A5FF 70%, #A8E6CF 100%);
-  color: #fff; padding: 28px 20px 28px; text-align: center; position: relative; z-index: 1;
-  border-radius: 0 0 36px 36px;
-  box-shadow: 0 6px 30px rgba(255,143,171,0.3);
+.header-deco-left, .header-deco-right {
+  position: absolute; top: 10px; font-size: 18px; opacity: 0.45;
 }
-.header::after {
-  content: '🌸'; position: absolute; top: 8px; right: 16px; font-size: 20px; opacity: 0.5;
+.header-deco-left { left: 14px; }
+.header-deco-right { right: 14px; }
+.header .title {
+  font-size: 20px; font-weight: 400; margin-bottom: 6px; letter-spacing: 2px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.06);
 }
-.header::before {
-  content: '✨'; position: absolute; top: 8px; left: 16px; font-size: 20px; opacity: 0.5;
+.header .greeting {
+  font-size: 13px; opacity: 0.92; letter-spacing: 1.5px; margin-bottom: 2px;
 }
-.header .title { font-size: 20px; font-weight: 400; margin-bottom: 6px; letter-spacing: 1px; }
-.header .greeting { font-size: 14px; opacity: 0.9; margin-bottom: 4px; letter-spacing: 2px; }
 .header .rate-wrap {
-  display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 14px;
-  background: rgba(255,255,255,0.3); backdrop-filter: blur(8px);
-  border-radius: 30px; padding: 10px 20px; font-size: 14px; font-weight: 400;
-  border: 1.5px solid rgba(255,255,255,0.3);
+  display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 14px;
+  background: rgba(255,255,255,0.35); backdrop-filter: blur(12px);
+  border-radius: 24px; padding: 12px 20px; font-size: 13px;
+  border: 1px solid rgba(255,255,255,0.4);
 }
-.header .rate-wrap .tip-text { font-size: 13px; opacity: 0.9; letter-spacing: 1px; }
-.header .rate-wrap .rate-row { display: flex; align-items: center; gap: 8px; }
-.header .rate-wrap .num { font-size: 20px; font-weight: 400; }
+.header .rate-wrap .tip-text { font-size: 12px; opacity: 0.9; letter-spacing: 0.5px; }
+.header .rate-wrap .rate-row {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+}
+.header .rate-wrap .rate-row span:first-child { font-size: 13px; white-space: nowrap; }
+.rate-bar {
+  flex: 1; height: 8px; background: rgba(255,255,255,0.35); border-radius: 10px; overflow: hidden;
+}
+.rate-fill {
+  height: 100%; background: #fff; border-radius: 10px;
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 8px rgba(255,255,255,0.5);
+}
+.header .rate-wrap .num {
+  font-size: 18px; font-weight: 400; min-width: 40px; text-align: right;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
 
 .container {
   flex: 1;
@@ -181,33 +218,27 @@ html, body, #app { height: 100%; margin: 0; padding: 0; }
 }
 .container::-webkit-scrollbar { display: none; }
 
-.tip-banner {
-  background: linear-gradient(135deg, rgba(255,182,193,0.15), rgba(212,165,255,0.1));
-  border-radius: 16px; padding: 14px 18px; margin-bottom: 16px;
-  font-size: 14px; color: var(--text); text-align: center; line-height: 1.7;
-  border: 1.5px solid rgba(255,182,193,0.12);
-}
-.tip-banner .tip-icon { font-size: 22px; display: block; margin-bottom: 4px; }
-
 .toolbar {
   position: fixed; bottom: 0; left: 6px; right: 6px;
-  background: rgba(255,255,255,0.92); backdrop-filter: blur(16px);
-  box-shadow: 0 -2px 24px rgba(255,143,171,0.08);
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
+  box-shadow: 0 -4px 24px rgba(248,164,184,0.1);
   display: flex; padding: 6px 8px calc(6px + var(--safe-bottom)); gap: 4px;
   z-index: 20; align-items: center;
-  border-radius: 28px 28px 0 0;
-  border-top: 1.5px solid rgba(255,182,193,0.12);
+  border-radius: 24px 24px 0 0;
+  border-top: 1px solid rgba(248,164,184,0.12);
 }
 .toolbar .tab {
-  flex: 1; text-align: center; padding: 10px 4px; border: none; background: none;
+  flex: 1; text-align: center; padding: 8px 4px; border: none; background: none;
   font-family: inherit; font-size: 11px; color: var(--text-light); cursor: pointer;
-  border-radius: 16px; transition: all 0.2s;
+  border-radius: 16px; transition: all 0.25s ease;
   display: flex; flex-direction: column; align-items: center; gap: 3px;
 }
-.toolbar .tab .tab-icon { font-size: 24px; transition: all 0.2s; }
-.toolbar .tab.active { color: var(--pink); background: rgba(255,143,171,0.08); }
-.toolbar .tab.active .tab-icon { animation: tabBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.toolbar .tab .tab-svg {
+  width: 22px; height: 22px; transition: all 0.25s ease;
+}
+.toolbar .tab.active { color: var(--pink); background: rgba(248,164,184,0.1); }
+.toolbar .tab.active .tab-svg { animation: tabBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
 @keyframes tabBounce {
-  0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1.1); }
+  0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1.05); }
 }
 </style>
