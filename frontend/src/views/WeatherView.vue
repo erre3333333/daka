@@ -1,38 +1,34 @@
 <template>
   <div class="weather-view">
-    <van-nav-bar title="天气" />
-    
-    <div class="container">
-      <van-loading v-if="loading" style="text-align: center; padding: 40px" />
-      
-      <template v-else>
-        <div class="weather-card" v-for="city in cities" :key="city.id">
-          <div class="city-name">{{ city.name }}</div>
-          <div class="weather-main">
-            <span class="emoji">{{ city.emoji }}</span>
-            <span class="temp">{{ city.temperature }}°</span>
-          </div>
+    <div class="weather-grid">
+      <div class="weather-card" v-for="city in cities" :key="city.id">
+        <div class="city-header">
+          <div class="city-name">{{ city.name }} {{ city.id === 'xian' ? '🏯' : '🧊' }}</div>
+          <div class="city-now">现在</div>
+        </div>
+        <div class="temp-main">
+          <span class="weather-icon">{{ city.emoji }}</span>
+          <div class="temp-num">{{ Math.round(city.temperature) }}<small>°C</small></div>
           <div class="weather-desc">{{ city.weather_desc }}</div>
-          <div class="weather-detail">
-            <span>体感 {{ city.apparent_temperature }}°</span>
-            <span>湿度 {{ city.humidity }}%</span>
-            <span>风速 {{ city.wind_speed }}km/h</span>
-          </div>
-          <div class="temp-range">
-            <span>↑ {{ city.temp_max }}°</span>
-            <span>↓ {{ city.temp_min }}°</span>
+          <div class="temp-range" v-if="city.temp_max && city.temp_min">
+            ↑ {{ Math.round(city.temp_max) }}° ↓ {{ Math.round(city.temp_min) }}°
           </div>
         </div>
-      </template>
+        <div class="weather-detail">
+          <span>体感<br><span class="val">{{ Math.round(city.apparent_temperature) }}°</span></span>
+          <span>湿度<br><span class="val">{{ city.humidity }}%</span></span>
+          <span>风速<br><span class="val">{{ Math.round(city.wind_speed) }}km/h</span></span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { weatherApi } from '../api'
 
-const loading = ref(true)
+const updateTip = inject('updateTip')
 const cities = ref([])
 
 const cityList = [
@@ -41,7 +37,6 @@ const cityList = [
 ]
 
 const fetchWeather = async () => {
-  loading.value = true
   try {
     const results = await Promise.all(
       cityList.map(async (city) => {
@@ -50,8 +45,9 @@ const fetchWeather = async () => {
       })
     )
     cities.value = results
-  } finally {
-    loading.value = false
+    updateTip('🌤', '西安和哈尔滨的天气都查好啦 ☀️')
+  } catch {
+    updateTip('🥺', '天气加载失败了，晚点再试试吧')
   }
 }
 
@@ -64,59 +60,35 @@ onMounted(fetchWeather)
   background: var(--bg);
 }
 
-.container {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 16px;
-}
+.weather-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 .weather-card {
-  background: linear-gradient(135deg, #FFB5C2 0%, #D4A5FF 100%);
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 16px;
-  color: #fff;
+  background: var(--card); backdrop-filter: blur(12px);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  border: 1.5px solid rgba(255,182,193,0.15); overflow: hidden;
+  transition: transform 0.2s;
 }
+.weather-card:active { transform: scale(0.97); }
 
-.city-name {
-  font-size: 18px;
-  font-weight: 500;
-  margin-bottom: 12px;
+.city-header {
+  padding: 14px 14px 10px; text-align: center;
+  background: linear-gradient(135deg, rgba(255,182,193,0.15), rgba(212,165,255,0.1));
+  border-bottom: 1px solid rgba(255,182,193,0.1);
 }
+.city-name { font-size: 15px; font-weight: 400; color: var(--text); letter-spacing: 1px; }
+.city-now { font-size: 11px; color: var(--text-light); margin-top: 2px; }
 
-.weather-main {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.emoji {
-  font-size: 48px;
-}
-
-.temp {
-  font-size: 48px;
-  font-weight: 300;
-}
-
-.weather-desc {
-  font-size: 16px;
-  margin-top: 8px;
-}
+.temp-main { text-align: center; padding: 12px 14px 6px; }
+.weather-icon { font-size: 32px; margin: 4px 0; display: block; }
+.temp-num { font-size: 36px; font-weight: 400; color: var(--text); line-height: 1; }
+.temp-num small { font-size: 16px; color: var(--text-light); }
+.weather-desc { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+.temp-range { font-size: 13px; color: var(--text-light); margin-top: 4px; }
 
 .weather-detail {
-  display: flex;
-  gap: 16px;
-  margin-top: 12px;
-  font-size: 14px;
-  opacity: 0.9;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  padding: 8px 14px 14px; font-size: 11px; color: var(--text-light);
 }
-
-.temp-range {
-  display: flex;
-  gap: 16px;
-  margin-top: 8px;
-  font-size: 14px;
-  opacity: 0.8;
-}
+.weather-detail span { text-align: center; }
+.weather-detail .val { font-size: 13px; color: var(--text); font-weight: 400; }
 </style>
