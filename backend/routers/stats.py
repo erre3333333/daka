@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from datetime import datetime, timedelta
 import aiosqlite
-from ..database import get_db
+from database import get_db
 
 router = APIRouter(prefix="/api/stats", tags=["stats"])
 
