@@ -137,6 +137,9 @@ const setMood = async (slotId, mood) => {
   margin-bottom: 16px;
   overflow: hidden;
   border: 1.5px solid rgba(255,182,193,0.15);
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .empty-state {
