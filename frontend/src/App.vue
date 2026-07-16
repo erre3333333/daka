@@ -54,17 +54,24 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted, provide, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useScheduleStore } from './stores/schedule'
 import { useCheckinStore } from './stores/checkin'
 
 const router = useRouter()
+const route = useRoute()
 const scheduleStore = useScheduleStore()
 const checkinStore = useCheckinStore()
 
 const now = ref(new Date())
 const activeTab = ref('checkin')
+
+const tabMap = { '/': 'checkin', '/stats': 'stats', '/weather': 'weather', '/settings': 'settings' }
+
+watch(() => route.path, (path) => {
+  activeTab.value = tabMap[path] || 'checkin'
+}, { immediate: true })
 const tipIcon = ref('🌸')
 const tipText = ref('今天也要元气满满哦！')
 const completionRate = computed(() => {
