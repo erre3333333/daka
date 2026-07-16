@@ -59,9 +59,6 @@
             <div class="h-pop" v-if="h.pop > 0">{{ h.pop }}%</div>
             <div class="h-text" v-else></div>
             <div class="h-temp">{{ Math.round(h.temp) }}°</div>
-            <div class="h-bar-wrap">
-              <div class="h-bar" :style="{ height: h.pop + '%', opacity: h.pop > 15 ? 0.5 : 0 }"></div>
-            </div>
           </div>
         </div>
         <div class="scroll-fade"></div>
@@ -179,16 +176,6 @@ onMounted(fetchWeather)
 .h-pop { font-size: 10px; color: #7EC8E3; font-weight: 400; min-height: 14px; }
 .h-text { min-height: 14px; }
 .h-temp { font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.2; }
-.h-bar-wrap {
-  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 4px; height: 100%; border-radius: 2px;
-  background: rgba(248,164,184,0.06); z-index: 0;
-}
-.h-bar {
-  position: absolute; bottom: 0; left: 0; width: 100%;
-  border-radius: 2px; background: linear-gradient(180deg, #B8E8D0, #D4BFFF);
-  transition: height 0.3s;
-}
 .scroll-fade {
   position: absolute; right: 0; top: 0; bottom: 16px; width: 32px;
   background: linear-gradient(90deg, transparent, var(--bg));
