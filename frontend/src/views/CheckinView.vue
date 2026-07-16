@@ -1,135 +1,126 @@
 <template>
   <div class="checkin-view">
-    <div class="header">
-      <div class="greeting">{{ greeting }}</div>
-      <div class="clock">{{ clock }}</div>
-      <div class="date">{{ dateStr }}</div>
+    <div class="card" v-if="schedules.length === 0">
+      <div class="empty-state">
+        <div class="icon">📋</div>
+        <p>还没有作息计划呢<br>去设置页面添加吧 💕</p>
+      </div>
     </div>
-    
-    <div class="container">
-      <div class="encourage" v-if="encourage">{{ encourage }}</div>
-      
-      <van-cell-group inset>
-        <van-cell
-          v-for="schedule in schedules"
-          :key="schedule.id"
-          :title="schedule.label"
-          :value="getTime(schedule)"
-          :label="getStatusLabel(schedule.id)"
-        >
-          <template #right-icon>
-            <van-button
-              v-if="getStatus(schedule.id) === 'missed'"
-              type="primary"
-              size="small"
-              @click="doCheckin(schedule.id)"
-            >
-              打卡
-            </van-button>
-            <van-button
-              v-else
-              type="default"
-              size="small"
-              @click="cancelCheckin(schedule.id)"
-            >
-              重置
-            </van-button>
+
+    <div class="card" v-else>
+      <div
+        class="slot"
+        v-for="schedule in schedules"
+        :key="schedule.id"
+        :class="{ done: getStatus(schedule.id) === 'done' }"
+      >
+        <div class="time-icon">{{ getIcon(schedule.id) }}</div>
+        <div class="info">
+          <div class="label">
+            {{ schedule.label }}
+            <small>{{ getTime(schedule) }}</small>
+          </div>
+          <div class="mood-line" v-if="getStatus(schedule.id) === 'done'">
+            <span
+              v-for="(mood, i) in moods"
+              :key="i"
+              class="mood-dot"
+              :class="{ active: getMood(schedule.id) === i + 1 }"
+              @click="setMood(schedule.id, i + 1)"
+            >{{ mood }}</span>
+          </div>
+          <div class="meta" v-else>{{ getNote(schedule.id) }}</div>
+        </div>
+        <div class="actions">
+          <template v-if="getStatus(schedule.id) === 'done'">
+            <span class="status-badge done">✅</span>
           </template>
-        </van-cell>
-      </van-cell-group>
+          <template v-else-if="getStatus(schedule.id) === 'skip'">
+            <span class="status-badge skip">⏭️</span>
+          </template>
+          <template v-else>
+            <button class="btn btn-done" @click="doCheckin(schedule.id, 'done')">完成</button>
+            <button class="btn btn-skip" @click="doCheckin(schedule.id, 'skip')">跳过</button>
+          </template>
+          <button
+            class="btn-reset"
+            v-if="getStatus(schedule.id)"
+            @click="resetCheckin(schedule.id)"
+          >重置</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { computed, inject } from 'vue'
 import { useScheduleStore } from '../stores/schedule'
 import { useCheckinStore } from '../stores/checkin'
 
 const scheduleStore = useScheduleStore()
 const checkinStore = useCheckinStore()
+const updateTip = inject('updateTip')
 
-const now = ref(new Date())
-const encourage = ref('')
+const moods = ['😞', '😐', '😊', '😄', '🥰']
 
-const encourages = [
-  '今天也是元气满满的一天！',
-  '每一步都是进步，加油！',
-  '坚持就是胜利，你最棒！',
-  '相信自己，你可以的！',
-  '每一天都是新的开始！',
-  '保持微笑，好运自来！',
-  '你比想象中更强大！',
-  '努力的你，值得被看见！',
-  '小小的努力，大大的改变！',
-  '今天也要开开心心的！'
-]
+const scheduleIcons = {
+  wake: '☀️', breakfast: '🥐', lunch: '🍚', nap: '😴',
+  dinner: '🍜', exercise: '🏃‍♀️', sleep: '🌙'
+}
 
-const greeting = computed(() => {
-  const hour = now.value.getHours()
-  if (hour < 6) return '夜深了，注意休息哦~'
-  if (hour < 12) return '早上好，新的一天开始啦~'
-  if (hour < 14) return '中午好，记得吃饭哦~'
-  if (hour < 18) return '下午好，继续加油~'
-  if (hour < 22) return '晚上好，今天辛苦了~'
-  return '夜深了，早点休息哦~'
-})
-
-const clock = computed(() => {
-  const h = now.value.getHours().toString().padStart(2, '0')
-  const m = now.value.getMinutes().toString().padStart(2, '0')
-  return `${h}:${m}`
-})
-
-const dateStr = computed(() => {
-  const d = now.value
-  const weekdays = ['日', '一', '二', '三', '四', '五', '六']
-  return `${d.getMonth() + 1}月${d.getDate()}日 周${weekdays[d.getDay()]}`
-})
+const scheduleNotes = {
+  wake: '新的一天开始啦',
+  breakfast: '早餐要吃好哦',
+  lunch: '中午记得吃饱饱',
+  nap: '休息一下充充电',
+  dinner: '晚餐也要吃好',
+  exercise: '动起来～',
+  sleep: '早睡早起身体好'
+}
 
 const schedules = computed(() => scheduleStore.schedules)
 
-const getTime = (schedule) => {
-  return `${schedule.hour.toString().padStart(2, '0')}:${schedule.minute.toString().padStart(2, '0')}`
+const getIcon = (id) => scheduleIcons[id] || '⏰'
+const getTime = (s) => `${s.hour.toString().padStart(2, '0')}:${s.minute.toString().padStart(2, '0')}`
+const getStatus = (slotId) => checkinStore.getCheckinStatus(slotId)
+const getMood = (slotId) => checkinStore.getMood(slotId)
+const getNote = (id) => scheduleNotes[id] || ''
+
+const doCheckin = async (slotId, status) => {
+  const date = new Date().toISOString().slice(0, 10)
+  await checkinStore.doCheckin({ date, slot_id: slotId, status })
+  updateTip('💖', '打卡成功！宝宝真棒 ✨')
+  setTimeout(() => {
+    const tips = [
+      { icon: '💪', text: '今天也要元气满满哦！' },
+      { icon: '💖', text: '和你在一起的每一天都是礼物' },
+      { icon: '✨', text: '你的存在就是我的小确幸' },
+    ]
+    const t = tips[Math.floor(Math.random() * tips.length)]
+    updateTip(t.icon, t.text)
+  }, 2500)
 }
 
-const getStatus = (slotId) => {
-  return checkinStore.getCheckinStatus(slotId)
-}
-
-const getStatusLabel = (slotId) => {
-  const status = getStatus(slotId)
-  if (status === 'done') return '✅ 已完成'
-  if (status === 'skipped') return '⏭️ 已跳过'
-  return '⏳ 待打卡'
-}
-
-const doCheckin = async (slotId) => {
-  const date = now.value.toISOString().slice(0, 10)
-  await checkinStore.doCheckin({ date, slot_id: slotId, status: 'done' })
-  encourage.value = encourages[Math.floor(Math.random() * encourages.length)]
-}
-
-const cancelCheckin = async (slotId) => {
-  const date = now.value.toISOString().slice(0, 10)
+const resetCheckin = async (slotId) => {
+  const date = new Date().toISOString().slice(0, 10)
   await checkinStore.cancelCheckin(date, slotId)
 }
 
-let timer = null
-
-onMounted(async () => {
-  await scheduleStore.fetchSchedules()
-  const date = now.value.toISOString().slice(0, 10)
-  await checkinStore.fetchCheckins(date)
-  
-  timer = setInterval(() => {
-    now.value = new Date()
-  }, 1000)
-})
-
-onUnmounted(() => {
-  if (timer) clearInterval(timer)
-})
+const setMood = async (slotId, mood) => {
+  const date = new Date().toISOString().slice(0, 10)
+  await checkinStore.setMood(date, slotId, mood)
+  const msgs = ['抱抱你 🫂', '放轻松 🍃', '还不错 😊', '真好呀 🥰', '太开心了 🎉']
+  updateTip('💖', msgs[mood - 1] || msgs[2])
+  setTimeout(() => {
+    const tips = [
+      { icon: '💪', text: '今天也要元气满满哦！' },
+      { icon: '💖', text: '和你在一起的每一天都是礼物' },
+    ]
+    const t = tips[Math.floor(Math.random() * tips.length)]
+    updateTip(t.icon, t.text)
+  }, 2500)
+}
 </script>
 
 <style scoped>
@@ -138,46 +129,71 @@ onUnmounted(() => {
   background: var(--bg);
 }
 
-.header {
-  background: linear-gradient(135deg, #FFB5C2 0%, #FF8FAB 30%, #D4A5FF 70%, #A8E6CF 100%);
-  color: #fff;
-  padding: 28px 20px 36px;
-  text-align: center;
-  border-radius: 0 0 36px 36px;
-}
-
-.greeting {
-  font-size: 14px;
-  opacity: 0.9;
-  margin-bottom: 4px;
-}
-
-.clock {
-  font-size: 56px;
-  font-weight: 400;
-  letter-spacing: 6px;
-}
-
-.date {
-  font-size: 14px;
-  opacity: 0.8;
-  margin-top: 8px;
-}
-
-.container {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 16px;
-}
-
-.encourage {
-  background: rgba(255, 255, 255, 0.88);
-  border-radius: 20px;
-  padding: 16px;
-  margin-bottom: 16px;
-  text-align: center;
-  font-size: 16px;
-  color: var(--pink-dark);
+.card {
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  overflow: hidden;
+  border: 1.5px solid rgba(255,182,193,0.15);
 }
+
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-light);
+}
+.empty-state .icon { font-size: 56px; margin-bottom: 12px; display: block; }
+.empty-state p { font-size: 14px; line-height: 1.8; }
+
+.slot {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border-bottom: 1px solid rgba(255,182,193,0.1);
+  transition: all 0.3s; position: relative;
+}
+.slot:last-child { border-bottom: none; }
+.slot .time-icon {
+  width: 54px; height: 54px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--pink-light), var(--peach));
+  transition: all 0.3s; box-shadow: 0 3px 10px rgba(255,143,171,0.2);
+}
+.slot.done .time-icon {
+  background: linear-gradient(135deg, var(--mint), #C8E6C9);
+  box-shadow: 0 3px 10px rgba(168,230,207,0.3);
+}
+.slot .info { flex: 1; min-width: 0; }
+.slot .label { font-size: 17px; font-weight: 400; color: var(--text); }
+.slot .label small { font-weight: 400; color: var(--text-light); font-size: 13px; margin-left: 6px; }
+.slot .meta { font-size: 12px; color: var(--text-light); margin-top: 3px; letter-spacing: 0.5px; }
+.slot .mood-line { display: flex; gap: 5px; margin-top: 7px; }
+.slot .mood-dot {
+  width: 34px; height: 34px; border-radius: 50%; border: 2px solid transparent;
+  cursor: pointer; font-size: 14px; display: flex; align-items: center;
+  justify-content: center; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: #FFF0F2;
+}
+.slot .mood-dot:active { transform: scale(0.8); }
+.slot .mood-dot.active { border-color: #FF8FAB; background: #FFE0E6; transform: scale(1.2); }
+.slot .actions { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+.slot .btn {
+  padding: 9px 18px; border-radius: 30px; border: none;
+  font-family: inherit; font-size: 13px; font-weight: 400; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); white-space: nowrap;
+}
+.slot .btn:active { transform: scale(0.85); }
+.btn-done {
+  background: linear-gradient(135deg, #FF8FAB, #FFB5C2); color: #fff;
+  box-shadow: 0 3px 12px rgba(255,143,171,0.35);
+}
+.btn-skip { background: #FFF0F2; color: var(--text-light); }
+.btn-reset {
+  background: none; border: 1.5px solid #E8D5DE; color: var(--text-light);
+  font-family: inherit; font-size: 11px; padding: 5px 10px; border-radius: 16px; cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-reset:active { background: #FFF0F2; }
+.slot .status-badge { font-size: 16px; }
 </style>
