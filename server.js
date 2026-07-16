@@ -56,6 +56,17 @@ if (existsSync(PUBLIC_DIR)) app.use('/assets', express.static(join(PUBLIC_DIR, '
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', version: '3.0.0' }))
 
+// Backup endpoint - returns database file
+app.get('/api/backup', (req, res) => {
+  const token = req.query.token || req.headers['x-backup-token']
+  const BACKUP_TOKEN = process.env.BACKUP_TOKEN || 'life-helper-backup-2024'
+  if (token !== BACKUP_TOKEN) return res.status(401).json({ error: 'unauthorized' })
+  if (!existsSync(DB_PATH)) return res.status(404).json({ error: 'no database' })
+  res.setHeader('Content-Type', 'application/octet-stream')
+  res.setHeader('Content-Disposition', `attachment; filename="life.db"`)
+  res.sendFile(DB_PATH)
+})
+
 // Schedules
 app.get('/api/schedules', (req, res) => res.json(queryAll('SELECT * FROM schedules ORDER BY hour,minute')))
 app.post('/api/schedules', (req, res) => {
