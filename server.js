@@ -97,7 +97,8 @@ app.get('/api/stats', (req, res) => {
   const totalSlots = schedules.length || 1
   const daily = queryAll(`SELECT date,COUNT(*) as total,SUM(CASE WHEN status='done' THEN 1 ELSE 0 END) as done,ROUND(CAST(SUM(CASE WHEN status='done' THEN 1 ELSE 0 END) AS REAL)/?*100) as rate FROM checkins WHERE date>=? GROUP BY date ORDER BY date`, [totalSlots, start])
   const done = queryOne("SELECT COUNT(*) as c FROM checkins WHERE date>=? AND status='done'", [start])
-  res.json({ daily, overall: Math.round(done.c/totalSlots*100), total: totalSlots, done: done.c })
+  const doneCount = done?.c || 0
+  res.json({ daily, overall: Math.round(doneCount/totalSlots*100), total: totalSlots, done: doneCount })
 })
 
 // Weather
@@ -120,8 +121,9 @@ app.post('/api/ai/analyze', (req, res) => {
   const start = new Date(Date.now()-days*86400000).toISOString().slice(0,10)
   const schedules = queryAll("SELECT * FROM schedules WHERE enabled=1 ORDER BY hour")
   const done = queryOne("SELECT COUNT(*) as c FROM checkins WHERE date>=? AND status='done'", [start])
-  const rate = schedules.length>0?Math.round(done.c/schedules.length*100):0
-  res.json({ content: `## 本周规律性报告\n\n过去 ${days} 天共完成 **${done.c}** 次打卡，规律率约 **${rate}%**。\n\n### 建议\n- 试着固定每天的作息时间\n- 睡前 1 小时远离手机\n- 每餐定时定量\n- 每天保持 30 分钟运动` })
+  const doneCount = done?.c || 0
+  const rate = schedules.length>0?Math.round(doneCount/schedules.length*100):0
+  res.json({ content: `## 本周规律性报告\n\n过去 ${days} 天共完成 **${doneCount}** 次打卡，规律率约 **${rate}%**。\n\n### 建议\n- 试着固定每天的作息时间\n- 睡前 1 小时远离手机\n- 每餐定时定量\n- 每天保持 30 分钟运动` })
 })
 
 // Static files
