@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import os
 import httpx
 import aiosqlite
-from ..database import get_db
+from database import get_db
 
 router = APIRouter(prefix="/api/ai", tags=["ai"])
 
