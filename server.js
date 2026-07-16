@@ -93,10 +93,11 @@ app.delete('/api/checkins', (req, res) => {
 app.get('/api/stats', (req, res) => {
   const range = req.query.range || 'week'; const days = range==='month'?30:7
   const start = new Date(Date.now()-days*86400000).toISOString().slice(0,10)
-  const daily = queryAll(`SELECT date,COUNT(*) as total,SUM(CASE WHEN status='done' THEN 1 ELSE 0 END) as done,ROUND(CAST(SUM(CASE WHEN status='done' THEN 1 ELSE 0 END) AS REAL)/COUNT(*)*100) as rate FROM checkins WHERE date>=? GROUP BY date ORDER BY date`, [start])
-  const total = queryOne('SELECT COUNT(*) as c FROM checkins WHERE date>=?', [start])
+  const schedules = queryAll("SELECT id FROM schedules WHERE enabled=1")
+  const totalSlots = schedules.length || 1
+  const daily = queryAll(`SELECT date,COUNT(*) as total,SUM(CASE WHEN status='done' THEN 1 ELSE 0 END) as done,ROUND(CAST(SUM(CASE WHEN status='done' THEN 1 ELSE 0 END) AS REAL)/?*100) as rate FROM checkins WHERE date>=? GROUP BY date ORDER BY date`, [totalSlots, start])
   const done = queryOne("SELECT COUNT(*) as c FROM checkins WHERE date>=? AND status='done'", [start])
-  res.json({ daily, overall: total.c>0?Math.round(done.c/total.c*100):0, total: total.c, done: done.c })
+  res.json({ daily, overall: Math.round(done.c/totalSlots*100), total: totalSlots, done: done.c })
 })
 
 // Weather
