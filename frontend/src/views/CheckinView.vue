@@ -48,6 +48,7 @@
           <div class="label">
             {{ schedule.label }}
             <small class="schedule-time">{{ getTime(schedule) }}</small>
+            <small class="checkin-time" v-if="getCheckinTime(schedule.id)">✓ {{ getCheckinTime(schedule.id) }}</small>
           </div>
           <div class="mood-line" v-if="getStatus(schedule.id) === 'done'">
             <span
@@ -110,6 +111,12 @@ const getTime = (s) => `${s.hour.toString().padStart(2, '0')}:${s.minute.toStrin
 const getStatus = (slotId) => checkinStore.getCheckinStatus(slotId)
 const getMood = (slotId) => checkinStore.getMood(slotId)
 const getNote = (id) => scheduleNotes[id] || ''
+const getCheckinTime = (slotId) => {
+  const c = checkinStore.checkins.find(c => c.slot_id === slotId)
+  if (!c?.created_at) return ''
+  const t = c.created_at.split(' ')[1] || ''
+  return t.slice(0, 5)
+}
 
 const doCheckin = async (slotId, status) => {
   const date = new Date().toISOString().slice(0, 10)
@@ -233,6 +240,10 @@ const setMood = async (slotId, mood) => {
 .schedule-time {
   font-size: 12px; color: var(--text-light); margin-left: 6px;
   background: rgba(248,164,184,0.08); padding: 2px 8px; border-radius: 8px;
+}
+.checkin-time {
+  font-size: 11px; color: var(--mint); margin-left: 4px;
+  background: rgba(184,232,208,0.15); padding: 2px 8px; border-radius: 8px;
 }
 .meta { font-size: 12px; color: var(--text-light); margin-top: 4px; letter-spacing: 0.5px; }
 .mood-line { display: flex; gap: 4px; margin-top: 6px; }
