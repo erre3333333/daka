@@ -1,0 +1,29 @@
+name: Backup Database
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download backup
+        run: |
+          mkdir -p backup
+          curl -s -o backup/life.db -w "%{http_code}" \
+            -H "X-Backup-Token: ${{ secrets.BACKUP_TOKEN }}" \
+            "${{ vars.RAILWAY_URL }}/api/backup?token=${{ secrets.BACKUP_TOKEN }}"
+
+      - name: Commit backup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp backup/life.db "backup/life-$(date +%Y%m%d).db"
+          cd backup && ls -t life-*.db | tail -n +31 | xargs -r rm && cd ..
+          git add backup/
+          git diff --staged --quiet || git commit -m "chore: backup $(date +%Y-%m-%d)"
+          git push
