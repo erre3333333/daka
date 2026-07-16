@@ -18,6 +18,7 @@
         <span id="clockM">{{ minutes }}</span>
       </div>
       <div class="rate-wrap">
+        <div class="tip-text">{{ tipIcon }} {{ tipText }}</div>
         <span>今日完成</span>
         <span class="num">{{ completionRate }}%</span>
       </div>
@@ -25,11 +26,6 @@
 
     <!-- 内容区 -->
     <div class="container">
-      <div class="tip-banner">
-        <span class="tip-icon">{{ tipIcon }}</span>
-        <span id="tipText">{{ tipText }}</span>
-      </div>
-
       <router-view />
     </div>
 
@@ -212,11 +208,12 @@ html { overflow-y: auto; }
 .header .clock-sep { animation: twinkle 1s step-end infinite; display: inline-block; }
 @keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 .header .rate-wrap {
-  display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 14px;
   background: rgba(255,255,255,0.3); backdrop-filter: blur(8px);
-  border-radius: 30px; padding: 6px 20px; font-size: 14px; font-weight: 400;
+  border-radius: 30px; padding: 10px 20px; font-size: 14px; font-weight: 400;
   border: 1.5px solid rgba(255,255,255,0.3);
 }
+.header .rate-wrap .tip-text { font-size: 13px; opacity: 0.9; letter-spacing: 1px; }
 .header .rate-wrap .num { font-size: 20px; font-weight: 400; }
 
 .container { max-width: 480px; margin: 0 auto; padding: 16px; position: relative; z-index: 1; }
