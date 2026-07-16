@@ -79,7 +79,7 @@ app.delete('/api/schedules/:id', (req, res) => {
 })
 
 // Checkins
-app.get('/api/checkins', (req, res) => res.json(queryAll('SELECT * FROM checkins WHERE date=?', [req.query.date || new Date().toISOString().slice(0,10)])))
+app.get('/api/checkins', (req, res) => res.json(queryAll('SELECT id,date,slot_id,status,note,mood,created_at FROM checkins WHERE date=?', [req.query.date || new Date().toISOString().slice(0,10)])))
 app.post('/api/checkins', (req, res) => {
   const { date, slot_id, status, note, mood } = req.body; const d = date || new Date().toISOString().slice(0,10)
   run(`INSERT INTO checkins (date,slot_id,status,note,mood) VALUES (?,?,?,?,?) ON CONFLICT(date,slot_id) DO UPDATE SET status=excluded.status,note=excluded.note,mood=excluded.mood`,
