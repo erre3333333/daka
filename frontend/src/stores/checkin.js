@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { checkinApi } from '../api'
 
 export const useCheckinStore = defineStore('checkin', () => {
@@ -30,12 +30,38 @@ export const useCheckinStore = defineStore('checkin', () => {
     return checkin?.status || 'missed'
   }
 
+  const getMood = (slotId) => {
+    const checkin = checkins.value.find(c => c.slot_id === slotId)
+    return checkin?.mood || 3
+  }
+
+  const setMood = async (date, slotId, mood) => {
+    const checkin = checkins.value.find(c => c.slot_id === slotId)
+    if (checkin) {
+      await checkinApi.create({
+        date,
+        slot_id: slotId,
+        status: checkin.status,
+        mood
+      })
+      await fetchCheckins(date)
+    }
+  }
+
+  const completionRate = computed(() => {
+    const done = checkins.value.filter(c => c.status === 'done').length
+    return checkins.value.length > 0 ? Math.round(done / checkins.value.length * 100) : 0
+  })
+
   return {
     checkins,
     loading,
     fetchCheckins,
     doCheckin,
     cancelCheckin,
-    getCheckinStatus
+    getCheckinStatus,
+    getMood,
+    setMood,
+    completionRate
   }
 })
