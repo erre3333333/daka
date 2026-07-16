@@ -45,7 +45,10 @@
       >
         <div class="slot-icon">{{ getIcon(schedule.id) }}</div>
         <div class="info">
-          <div class="label">{{ schedule.label }}</div>
+          <div class="label">
+            {{ schedule.label }}
+            <small class="schedule-time">{{ getTime(schedule) }}</small>
+          </div>
           <div class="mood-line" v-if="getStatus(schedule.id) === 'done'">
             <span
               v-for="(mood, i) in moods"
@@ -103,6 +106,7 @@ const scheduleNotes = {
 const schedules = computed(() => scheduleStore.schedules)
 
 const getIcon = (id) => scheduleIcons[id] || '⏰'
+const getTime = (s) => `${s.hour.toString().padStart(2, '0')}:${s.minute.toString().padStart(2, '0')}`
 const getStatus = (slotId) => checkinStore.getCheckinStatus(slotId)
 const getMood = (slotId) => checkinStore.getMood(slotId)
 const getNote = (id) => scheduleNotes[id] || ''
@@ -226,6 +230,10 @@ const setMood = async (slotId, mood) => {
 
 .info { flex: 1; min-width: 0; }
 .label { font-size: 16px; font-weight: 400; color: var(--text); }
+.schedule-time {
+  font-size: 12px; color: var(--text-light); margin-left: 6px;
+  background: rgba(248,164,184,0.08); padding: 2px 8px; border-radius: 8px;
+}
 .meta { font-size: 12px; color: var(--text-light); margin-top: 4px; letter-spacing: 0.5px; }
 .mood-line { display: flex; gap: 4px; margin-top: 6px; }
 .mood-dot {
