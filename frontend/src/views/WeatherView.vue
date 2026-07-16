@@ -45,39 +45,26 @@
         </svg>
         <div>
           <div class="title">小时预报</div>
-          <div class="subtitle">未来12小时温度与降水概率</div>
+          <div class="subtitle">未来12小时温度与降水</div>
         </div>
       </div>
       <div class="city-tabs">
         <button class="city-tab" v-for="c in cities" :key="c.city" :class="{ active: chartCity === c.city }" @click="chartCity = c.city">{{ c.city }}</button>
       </div>
-      <div class="chart-wrap">
-        <div class="chart-y">
-          <span class="y-label">{{ maxTemp }}°</span>
-          <span class="y-label">{{ midTemp }}°</span>
-          <span class="y-label">{{ minTemp }}°</span>
-        </div>
-        <div class="chart-area">
-          <svg class="chart-svg" viewBox="0 0 220 120" preserveAspectRatio="none">
-            <polyline :points="tempPoints" fill="none" stroke="#F8A4B8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <polyline :points="tempPoints" fill="none" stroke="url(#tempGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
-            <defs>
-              <linearGradient id="tempGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#FF8FA3"/><stop offset="100%" stop-color="#D4BFFF"/>
-              </linearGradient>
-            </defs>
-          </svg>
-          <div class="chart-bars">
-            <div class="bar-col" v-for="(h, i) in hourlyData" :key="i">
-              <div class="pop-bar" :style="{ height: (h.pop * 0.8) + '%', opacity: h.pop > 0 ? 0.7 : 0.15 }">
-                <span class="pop-num" v-if="h.pop > 0">{{ h.pop }}%</span>
-              </div>
+      <div class="scroll-wrap">
+        <div class="hourly-scroll">
+          <div class="hour-item" v-for="(h, i) in hourlyData" :key="i">
+            <div class="h-time">{{ h.time }}</div>
+            <div class="h-icon">{{ wmoIcon(h.code, h.pop) }}</div>
+            <div class="h-pop" v-if="h.pop > 0">{{ h.pop }}%</div>
+            <div class="h-text" v-else></div>
+            <div class="h-temp">{{ Math.round(h.temp) }}°</div>
+            <div class="h-bar-wrap">
+              <div class="h-bar" :style="{ height: h.pop + '%', opacity: h.pop > 15 ? 0.5 : 0 }"></div>
             </div>
           </div>
-          <div class="x-labels">
-            <span v-for="(h, i) in hourlyData" :key="i" class="x-label">{{ h.time }}</span>
-          </div>
         </div>
+        <div class="scroll-fade"></div>
       </div>
     </div>
   </div>
@@ -99,20 +86,19 @@ const cityList = [
 const activeCity = computed(() => cities.value.find(c => c.city === chartCity.value))
 const hourlyData = computed(() => activeCity.value?.hourly || [])
 
-const temps = computed(() => hourlyData.value.map(h => h.temp))
-const minTemp = computed(() => temps.value.length ? Math.floor(Math.min(...temps.value)) : 0)
-const maxTemp = computed(() => temps.value.length ? Math.ceil(Math.max(...temps.value)) : 0)
-const midTemp = computed(() => Math.round((minTemp.value + maxTemp.value) / 2))
-const range = computed(() => Math.max(maxTemp.value - minTemp.value, 1))
+const WMO = {
+  0: '☀️', 1: '🌤', 2: '⛅', 3: '☁️', 45: '🌫', 48: '🌫',
+  51: '🌦', 53: '🌦', 55: '🌦', 61: '🌧', 63: '🌧', 65: '🌧',
+  66: '🌧', 67: '🌧', 71: '🌨', 73: '🌨', 75: '❄️', 77: '🌨',
+  80: '🌦', 81: '🌧', 82: '🌧', 83: '🌨', 84: '🌨',
+  95: '⛈', 96: '⛈', 99: '⛈'
+}
+const RAIN_CODES = new Set([51,53,55,61,63,65,66,67,71,73,75,77,80,81,82,83,84,95,96,99])
 
-const tempPoints = computed(() => {
-  if (!hourlyData.value.length) return ''
-  return hourlyData.value.map((h, i) => {
-    const x = (i / (hourlyData.value.length - 1)) * 220
-    const y = 115 - ((h.temp - minTemp.value) / range.value) * 100
-    return `${x},${y}`
-  }).join(' ')
-})
+const wmoIcon = (code, pop) => {
+  if (pop > 0 && !RAIN_CODES.has(code)) return '🌦'
+  return WMO[code] || '☀️'
+}
 
 const fetchWeather = async () => {
   try {
@@ -159,39 +145,53 @@ onMounted(fetchWeather)
 .detail-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--text-light); }
 .detail-item .val { font-size: 13px; color: var(--text); font-weight: 400; }
 
-/* hourly chart */
 .hourly-card {
   background: var(--card); backdrop-filter: blur(16px);
   border-radius: var(--radius); box-shadow: var(--shadow);
   border: 1px solid rgba(248,164,184,0.12); overflow: hidden;
-  margin-top: 14px; padding: 0 0 16px;
+  margin-top: 14px; padding: 0 0 12px;
 }
 .card-header { display: flex; align-items: center; gap: 12px; padding: 18px 20px 8px; }
 .card-icon { width: 24px; height: 24px; flex-shrink: 0; }
 .title { font-size: 15px; font-weight: 400; letter-spacing: 0.5px; }
 .subtitle { font-size: 11px; color: var(--text-light); margin-top: 1px; }
-.city-tabs { display: flex; gap: 8px; padding: 8px 20px 4px; }
+.city-tabs { display: flex; gap: 8px; padding: 8px 20px 12px; }
 .city-tab {
   padding: 4px 16px; border: 1.5px solid rgba(248,164,184,0.2); border-radius: 14px;
   background: none; font-family: inherit; font-size: 13px; color: var(--text-light); cursor: pointer;
 }
 .city-tab.active { background: var(--pink-light); border-color: var(--pink); color: var(--pink); }
 
-.chart-wrap { display: flex; gap: 4px; padding: 8px 16px 0; height: 160px; }
-.chart-y { display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0 24px; width: 28px; flex-shrink: 0; }
-.y-label { font-size: 10px; color: var(--text-light); text-align: right; }
-
-.chart-area { flex: 1; position: relative; display: flex; flex-direction: column; }
-.chart-svg { position: absolute; inset: 0; width: 100%; height: calc(100% - 20px); z-index: 1; pointer-events: none; }
-.chart-bars { display: flex; align-items: flex-end; gap: 2px; height: calc(100% - 20px); padding-bottom: 0; position: relative; z-index: 0; }
-.bar-col { flex: 1; display: flex; align-items: flex-end; justify-content: center; height: 100%; }
-.pop-bar {
-  width: 100%; max-width: 14px; border-radius: 4px 4px 0 0;
-  background: linear-gradient(180deg, #B8E8D0, #D4BFFF);
-  transition: height 0.5s; position: relative; min-height: 2px;
+.scroll-wrap { position: relative; }
+.hourly-scroll {
+  display: flex; gap: 0; overflow-x: auto; padding: 4px 16px 12px;
+  scrollbar-width: thin; scrollbar-color: var(--pink) transparent;
+  -webkit-overflow-scrolling: touch;
 }
-.pop-num { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 8px; color: var(--mint); white-space: nowrap; }
-
-.x-labels { display: flex; gap: 2px; height: 18px; margin-top: 2px; }
-.x-label { flex: 1; text-align: center; font-size: 9px; color: var(--text-light); }
+.hourly-scroll::-webkit-scrollbar { height: 3px; }
+.hourly-scroll::-webkit-scrollbar-thumb { background: var(--pink); border-radius: 3px; }
+.hour-item {
+  flex: 0 0 64px; display: flex; flex-direction: column;
+  align-items: center; gap: 4px; padding: 8px 2px; position: relative;
+}
+.h-time { font-size: 12px; color: var(--text-light); font-weight: 400; }
+.h-icon { font-size: 22px; line-height: 1; margin: 2px 0; }
+.h-pop { font-size: 10px; color: #7EC8E3; font-weight: 400; min-height: 14px; }
+.h-text { min-height: 14px; }
+.h-temp { font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.2; }
+.h-bar-wrap {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 100%; border-radius: 2px;
+  background: rgba(248,164,184,0.06); z-index: 0;
+}
+.h-bar {
+  position: absolute; bottom: 0; left: 0; width: 100%;
+  border-radius: 2px; background: linear-gradient(180deg, #B8E8D0, #D4BFFF);
+  transition: height 0.3s;
+}
+.scroll-fade {
+  position: absolute; right: 0; top: 0; bottom: 16px; width: 32px;
+  background: linear-gradient(90deg, transparent, var(--bg));
+  pointer-events: none;
+}
 </style>
