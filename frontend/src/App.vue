@@ -4,6 +4,7 @@
     <div class="header">
       <div class="header-deco-left">✿</div>
       <div class="header-deco-right">❀</div>
+      <div class="title">我最可爱的宝宝专属</div>
       <div class="greeting">{{ greeting }}</div>
       <div class="rate-wrap">
         <div class="tip-text">{{ tipIcon }} {{ tipText }}</div>
