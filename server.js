@@ -121,9 +121,14 @@ const WMO_E={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦
 app.get('/api/weather', async (req, res) => {
   const c = COORDS[req.query.city]; if (!c) return res.status(400).json({ error: 'invalid city' })
   try {
-    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,visibility&daily=temperature_2m_max,temperature_2m_min&forecast_days=1&timezone=Asia/Shanghai`, { signal: AbortSignal.timeout(8000) })
-    const data = await r.json(); const cur = data.current||{}; const daily = data.daily||{}; const code = cur.weather_code||0
-    res.json({ city:c.name, temperature:cur.temperature_2m||0, apparent_temperature:cur.apparent_temperature||0, humidity:cur.relative_humidity_2m||0, wind_speed:cur.wind_speed_10m||0, weather_code:code, weather_desc:WMO[code]||'未知', emoji:WMO_E[code]||'❓', temp_max:(daily.temperature_2m_max||[0])[0], temp_min:(daily.temperature_2m_min||[0])[0] })
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,visibility&daily=temperature_2m_max,temperature_2m_min&hourly=temperature_2m,precipitation_probability&forecast_hours=12&timezone=Asia/Shanghai`, { signal: AbortSignal.timeout(8000) })
+    const data = await r.json(); const cur = data.current||{}; const daily = data.daily||{}; const hourly = data.hourly||{}; const code = cur.weather_code||0
+    const hourlyData = (hourly.time||[]).map((t, i) => ({
+      time: t.slice(11, 16),
+      temp: hourly.temperature_2m?.[i] || 0,
+      pop: hourly.precipitation_probability?.[i] || 0
+    }))
+    res.json({ city:c.name, temperature:cur.temperature_2m||0, apparent_temperature:cur.apparent_temperature||0, humidity:cur.relative_humidity_2m||0, wind_speed:cur.wind_speed_10m||0, weather_code:code, weather_desc:WMO[code]||'未知', emoji:WMO_E[code]||'❓', temp_max:(daily.temperature_2m_max||[0])[0], temp_min:(daily.temperature_2m_min||[0])[0], hourly: hourlyData })
   } catch(e) { res.status(502).json({ error: e.message }) }
 })
 
