@@ -2,8 +2,8 @@
   <div class="app">
     <!-- 头部 -->
     <div class="header">
+      <div class="title">我最可爱的宝宝</div>
       <div class="greeting">{{ greeting }}</div>
-      <div class="name">宝宝 <span>💕</span></div>
       <div class="rate-wrap">
         <div class="tip-text">{{ tipIcon }} {{ tipText }}</div>
         <div class="rate-row">
@@ -130,23 +130,26 @@ body {
   font-family: 'ZCOOL KuaiLe', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
   background: linear-gradient(160deg, #FFF0F5 0%, #FFF8FA 30%, #F0E6FF 60%, #E8F5E9 100%);
   background-attachment: fixed;
-  color: var(--text); min-height: 100vh; padding-bottom: 90px;
+  color: var(--text); min-height: 100vh; padding-bottom: 80px;
   overflow-x: hidden; overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-html { overflow-y: auto; }
+html, body, #app { height: 100%; }
 </style>
 
 <style scoped>
 .app {
+  display: flex; flex-direction: column;
   min-height: 100vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+}
+
+.header {
+  flex-shrink: 0;
 }
 
 .header {
   background: linear-gradient(135deg, #FFB5C2 0%, #FF8FAB 30%, #D4A5FF 70%, #A8E6CF 100%);
-  color: #fff; padding: 28px 20px 36px; text-align: center; position: relative; z-index: 1;
+  color: #fff; padding: 28px 20px 28px; text-align: center; position: relative; z-index: 1;
   border-radius: 0 0 36px 36px;
   box-shadow: 0 6px 30px rgba(255,143,171,0.3);
 }
@@ -156,14 +159,8 @@ html { overflow-y: auto; }
 .header::before {
   content: '✨'; position: absolute; top: 8px; left: 16px; font-size: 20px; opacity: 0.5;
 }
+.header .title { font-size: 20px; font-weight: 400; margin-bottom: 6px; letter-spacing: 1px; }
 .header .greeting { font-size: 14px; opacity: 0.9; margin-bottom: 4px; letter-spacing: 2px; }
-.header .name { font-size: 24px; font-weight: 400; margin-bottom: 6px; letter-spacing: 1px; }
-.header .name span { display: inline-block; animation: heartBounce 1.2s ease-in-out infinite; }
-@keyframes heartBounce {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.2) rotate(-8deg); }
-  75% { transform: scale(1.2) rotate(8deg); }
-}
 .header .rate-wrap {
   display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 14px;
   background: rgba(255,255,255,0.3); backdrop-filter: blur(8px);
@@ -175,10 +172,10 @@ html { overflow-y: auto; }
 .header .rate-wrap .num { font-size: 20px; font-weight: 400; }
 
 .container {
+  flex: 1;
   max-width: 480px; margin: 0 auto; padding: 16px;
   position: relative; z-index: 1;
-  overflow-y: auto; max-height: calc(100vh - 140px);
-  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 
 .tip-banner {
