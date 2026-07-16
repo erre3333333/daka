@@ -18,7 +18,6 @@
         <div class="info">
           <div class="label">
             {{ schedule.label }}
-            <small>{{ getTime(schedule) }}</small>
           </div>
           <div class="mood-line" v-if="getStatus(schedule.id) === 'done'">
             <span
