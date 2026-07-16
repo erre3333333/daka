@@ -42,11 +42,6 @@
             <button class="btn btn-done" @click="doCheckin(schedule.id, 'done')">完成</button>
             <button class="btn btn-skip" @click="doCheckin(schedule.id, 'skip')">跳过</button>
           </template>
-          <button
-            class="btn-reset"
-            v-if="getStatus(schedule.id)"
-            @click="resetCheckin(schedule.id)"
-          >重置</button>
         </div>
       </div>
     </div>
@@ -100,11 +95,6 @@ const doCheckin = async (slotId, status) => {
     const t = tips[Math.floor(Math.random() * tips.length)]
     updateTip(t.icon, t.text)
   }, 2500)
-}
-
-const resetCheckin = async (slotId) => {
-  const date = new Date().toISOString().slice(0, 10)
-  await checkinStore.cancelCheckin(date, slotId)
 }
 
 const setMood = async (slotId, mood) => {
@@ -192,11 +182,5 @@ const setMood = async (slotId, mood) => {
   box-shadow: 0 3px 12px rgba(255,143,171,0.35);
 }
 .btn-skip { background: #FFF0F2; color: var(--text-light); }
-.btn-reset {
-  background: none; border: 1.5px solid #E8D5DE; color: var(--text-light);
-  font-family: inherit; font-size: 11px; padding: 5px 10px; border-radius: 16px; cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-reset:active { background: #FFF0F2; }
 .slot .status-badge { font-size: 16px; }
 </style>
