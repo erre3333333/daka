@@ -7,7 +7,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 8080
 const DATA_DIR = process.env.DATA_DIR || join(__dirname, 'data')
 const PUBLIC_DIR = join(__dirname, 'public')
 const DB_PATH = join(DATA_DIR, 'life.db')
