@@ -146,7 +146,9 @@ provide('updateTip', (icon, text) => {
 }
 body {
   font-family: 'ZCOOL KuaiLe', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
-  background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 90px;
+  background: linear-gradient(160deg, #FFF0F5 0%, #FFF8FA 30%, #F0E6FF 60%, #E8F5E9 100%);
+  background-attachment: fixed;
+  color: var(--text); min-height: 100vh; padding-bottom: 90px;
   overflow-x: hidden; overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
