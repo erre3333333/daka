@@ -1,5 +1,13 @@
 <template>
   <div class="checkin-view">
+    <!-- 浮动装饰 -->
+    <div class="floating-deco">
+      <div class="deco">🌸</div><div class="deco">💕</div><div class="deco">✨</div>
+      <div class="deco">🌷</div><div class="deco">💖</div><div class="deco">🌟</div>
+      <div class="deco">🌺</div><div class="deco">💫</div><div class="deco">🦋</div>
+      <div class="deco">🍭</div>
+    </div>
+
     <div class="card" v-if="schedules.length === 0">
       <div class="empty-state">
         <div class="icon">📋</div>
@@ -116,7 +124,31 @@ const setMood = async (slotId, mood) => {
 .checkin-view {
   min-height: 100vh;
   background: var(--bg);
+  position: relative;
 }
+
+.floating-deco {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.floating-deco .deco {
+  position: absolute; font-size: 22px; animation: floatDeco 10s infinite linear; opacity: 0.2;
+}
+@keyframes floatDeco {
+  0% { transform: translateY(100vh) rotate(0deg) scale(0.4); opacity: 0; }
+  15% { opacity: 0.2; }
+  85% { opacity: 0.15; }
+  100% { transform: translateY(-15vh) rotate(720deg) scale(1.1); opacity: 0; }
+}
+.floating-deco .deco:nth-child(1) { left: 3%; animation-duration: 11s; animation-delay: 0s; font-size: 18px; }
+.floating-deco .deco:nth-child(2) { left: 12%; animation-duration: 10s; animation-delay: 2s; font-size: 26px; }
+.floating-deco .deco:nth-child(3) { left: 22%; animation-duration: 12s; animation-delay: 4s; font-size: 16px; }
+.floating-deco .deco:nth-child(4) { left: 35%; animation-duration: 9s; animation-delay: 1s; font-size: 24px; }
+.floating-deco .deco:nth-child(5) { left: 48%; animation-duration: 13s; animation-delay: 3s; font-size: 20px; }
+.floating-deco .deco:nth-child(6) { left: 58%; animation-duration: 10s; animation-delay: 5s; font-size: 22px; }
+.floating-deco .deco:nth-child(7) { left: 68%; animation-duration: 11s; animation-delay: 2s; font-size: 18px; }
+.floating-deco .deco:nth-child(8) { left: 78%; animation-duration: 12s; animation-delay: 0s; font-size: 26px; }
+.floating-deco .deco:nth-child(9) { left: 88%; animation-duration: 9s; animation-delay: 4s; font-size: 16px; }
+.floating-deco .deco:nth-child(10) { left: 95%; animation-duration: 11s; animation-delay: 3s; font-size: 20px; }
 
 .card {
   background: var(--card);
