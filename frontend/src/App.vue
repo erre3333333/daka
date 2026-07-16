@@ -97,9 +97,36 @@ const tips = [
   { icon: '✨', text: '你的存在就是我的小确幸' },
 ]
 
+const tabTips = {
+  checkin: [
+    { icon: '💪', text: '今天也要元气满满哦！' },
+    { icon: '💖', text: '每一步打卡都是爱自己的表现' },
+    { icon: '✨', text: '坚持就是最棒的礼物' },
+  ],
+  stats: [
+    { icon: '📊', text: '看看你的进步轨迹吧' },
+    { icon: '🌟', text: '每一份努力都值得被记录' },
+    { icon: '💪', text: '数据见证你的成长' },
+  ],
+  weather: [
+    { icon: '🌤', text: '今天出门记得看天气哦' },
+    { icon: '☀️', text: '天气好就出去走走吧' },
+    { icon: '🌈', text: '不管什么天气都要开心' },
+  ],
+  settings: [
+    { icon: '⚙️', text: '定制属于你的专属计划' },
+    { icon: '🎀', text: '调整一下，让自己更舒服' },
+    { icon: '💫', text: '好的计划是成功的一半' },
+  ],
+}
+
 const switchTab = (tab) => {
   activeTab.value = tab
   router.push(`/${tab === 'checkin' ? '' : tab}`)
+  const list = tabTips[tab] || tabTips.checkin
+  const t = list[Math.floor(Math.random() * list.length)]
+  tipIcon.value = t.icon
+  tipText.value = t.text
 }
 
 let timer = null
