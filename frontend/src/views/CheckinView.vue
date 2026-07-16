@@ -2,24 +2,26 @@
   <div class="checkin-view">
     <!-- 浮动装饰 -->
     <div class="floating-deco">
-      <div class="deco heart">❤️</div>
-      <div class="deco">🌸</div>
-      <div class="deco heart">💗</div>
-      <div class="deco">✨</div>
-      <div class="deco heart">💖</div>
-      <div class="deco">🌷</div>
-      <div class="deco heart">💕</div>
-      <div class="deco">🌟</div>
-      <div class="deco heart">💝</div>
-      <div class="deco">🎀</div>
-      <div class="deco heart">❣️</div>
-      <div class="deco">🦋</div>
-      <div class="deco heart">🩷</div>
-      <div class="deco">🌺</div>
-      <div class="deco heart">♥️</div>
-      <div class="deco">💫</div>
-      <div class="deco heart">💓</div>
-      <div class="deco">🍭</div>
+      <div class="deco heart fall">❤️</div>
+      <div class="deco flower rise">🌸</div>
+      <div class="deco heart fall">💗</div>
+      <div class="deco snow fall">❄️</div>
+      <div class="deco heart rise">💖</div>
+      <div class="deco flower fall">🌷</div>
+      <div class="deco heart fall">💕</div>
+      <div class="deco snow rise">❅</div>
+      <div class="deco heart rise">💝</div>
+      <div class="deco flower fall">🎀</div>
+      <div class="deco heart fall">❣️</div>
+      <div class="deco snow fall">❆</div>
+      <div class="deco heart rise">🩷</div>
+      <div class="deco flower rise">🌺</div>
+      <div class="deco heart fall">♥️</div>
+      <div class="deco snow fall">❄️</div>
+      <div class="deco heart rise">💓</div>
+      <div class="deco flower fall">🍭</div>
+      <div class="deco snow rise">❅</div>
+      <div class="deco heart fall">💕</div>
     </div>
 
     <div class="card" v-if="schedules.length === 0">
@@ -159,35 +161,51 @@ const setMood = async (slotId, mood) => {
   position: fixed; inset: 0; pointer-events: none; z-index: 10; overflow: hidden;
 }
 .floating-deco .deco {
-  position: absolute; animation: floatDeco 12s infinite linear; opacity: 0.4;
+  position: absolute; animation-duration: 12s; animation-iteration-count: infinite;
+  animation-timing-function: linear; opacity: 0.4;
 }
-.floating-deco .deco.heart {
-  color: #FF4D6A; text-shadow: 0 0 8px rgba(255,77,106,0.4);
-}
-@keyframes floatDeco {
+.floating-deco .deco.heart { color: #FF4D6A; text-shadow: 0 0 8px rgba(255,77,106,0.4); }
+.floating-deco .deco.flower { color: #FFB6C1; }
+.floating-deco .deco.snow { color: #B0E0E6; text-shadow: 0 0 6px rgba(176,224,230,0.6); }
+
+/* 上升动画 */
+.floating-deco .deco.rise { animation-name: riseUp; }
+@keyframes riseUp {
   0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
-  10% { opacity: 0.35; }
-  90% { opacity: 0.3; }
+  10% { opacity: 0.4; }
+  90% { opacity: 0.35; }
   100% { transform: translateY(-15vh) rotate(540deg) scale(1); opacity: 0; }
 }
+
+/* 下落动画 */
+.floating-deco .deco.fall { animation-name: fallDown; }
+@keyframes fallDown {
+  0% { transform: translateY(-15vh) rotate(0deg) scale(0.5); opacity: 0; }
+  10% { opacity: 0.4; }
+  90% { opacity: 0.35; }
+  100% { transform: translateY(100vh) rotate(-540deg) scale(1); opacity: 0; }
+}
+
 .floating-deco .deco:nth-child(1) { left: 3%; animation-duration: 11s; animation-delay: 0s; font-size: 28px; }
-.floating-deco .deco:nth-child(2) { left: 10%; animation-duration: 13s; animation-delay: 1s; font-size: 20px; }
-.floating-deco .deco:nth-child(3) { left: 18%; animation-duration: 10s; animation-delay: 3s; font-size: 32px; }
-.floating-deco .deco:nth-child(4) { left: 26%; animation-duration: 14s; animation-delay: 0s; font-size: 18px; }
-.floating-deco .deco:nth-child(5) { left: 34%; animation-duration: 12s; animation-delay: 2s; font-size: 30px; }
-.floating-deco .deco:nth-child(6) { left: 42%; animation-duration: 15s; animation-delay: 4s; font-size: 22px; }
-.floating-deco .deco:nth-child(7) { left: 50%; animation-duration: 11s; animation-delay: 1s; font-size: 34px; }
-.floating-deco .deco:nth-child(8) { left: 58%; animation-duration: 13s; animation-delay: 3s; font-size: 18px; }
-.floating-deco .deco:nth-child(9) { left: 65%; animation-duration: 10s; animation-delay: 0s; font-size: 28px; }
-.floating-deco .deco:nth-child(10) { left: 72%; animation-duration: 14s; animation-delay: 2s; font-size: 22px; }
-.floating-deco .deco:nth-child(11) { left: 79%; animation-duration: 12s; animation-delay: 4s; font-size: 30px; }
-.floating-deco .deco:nth-child(12) { left: 86%; animation-duration: 11s; animation-delay: 1s; font-size: 18px; }
-.floating-deco .deco:nth-child(13) { left: 92%; animation-duration: 13s; animation-delay: 3s; font-size: 26px; }
-.floating-deco .deco:nth-child(14) { left: 7%; animation-duration: 15s; animation-delay: 5s; font-size: 20px; }
-.floating-deco .deco:nth-child(15) { left: 46%; animation-duration: 10s; animation-delay: 2s; font-size: 28px; }
-.floating-deco .deco:nth-child(16) { left: 55%; animation-duration: 14s; animation-delay: 0s; font-size: 18px; }
-.floating-deco .deco:nth-child(17) { left: 30%; animation-duration: 12s; animation-delay: 4s; font-size: 32px; }
-.floating-deco .deco:nth-child(18) { left: 68%; animation-duration: 11s; animation-delay: 1s; font-size: 22px; }
+.floating-deco .deco:nth-child(2) { left: 10%; animation-duration: 14s; animation-delay: 1s; font-size: 20px; }
+.floating-deco .deco:nth-child(3) { left: 17%; animation-duration: 10s; animation-delay: 3s; font-size: 30px; }
+.floating-deco .deco:nth-child(4) { left: 23%; animation-duration: 13s; animation-delay: 0s; font-size: 18px; }
+.floating-deco .deco:nth-child(5) { left: 30%; animation-duration: 12s; animation-delay: 2s; font-size: 28px; }
+.floating-deco .deco:nth-child(6) { left: 37%; animation-duration: 15s; animation-delay: 4s; font-size: 20px; }
+.floating-deco .deco:nth-child(7) { left: 43%; animation-duration: 11s; animation-delay: 1s; font-size: 32px; }
+.floating-deco .deco:nth-child(8) { left: 50%; animation-duration: 14s; animation-delay: 3s; font-size: 16px; }
+.floating-deco .deco:nth-child(9) { left: 56%; animation-duration: 10s; animation-delay: 0s; font-size: 26px; }
+.floating-deco .deco:nth-child(10) { left: 62%; animation-duration: 13s; animation-delay: 2s; font-size: 20px; }
+.floating-deco .deco:nth-child(11) { left: 68%; animation-duration: 12s; animation-delay: 4s; font-size: 30px; }
+.floating-deco .deco:nth-child(12) { left: 74%; animation-duration: 11s; animation-delay: 1s; font-size: 16px; }
+.floating-deco .deco:nth-child(13) { left: 80%; animation-duration: 14s; animation-delay: 3s; font-size: 24px; }
+.floating-deco .deco:nth-child(14) { left: 86%; animation-duration: 15s; animation-delay: 5s; font-size: 18px; }
+.floating-deco .deco:nth-child(15) { left: 7%; animation-duration: 10s; animation-delay: 2s; font-size: 26px; }
+.floating-deco .deco:nth-child(16) { left: 46%; animation-duration: 13s; animation-delay: 0s; font-size: 16px; }
+.floating-deco .deco:nth-child(17) { left: 92%; animation-duration: 12s; animation-delay: 4s; font-size: 28px; }
+.floating-deco .deco:nth-child(18) { left: 20%; animation-duration: 14s; animation-delay: 1s; font-size: 22px; }
+.floating-deco .deco:nth-child(19) { left: 55%; animation-duration: 11s; animation-delay: 3s; font-size: 18px; }
+.floating-deco .deco:nth-child(20) { left: 75%; animation-duration: 15s; animation-delay: 5s; font-size: 24px; }
 
 .card {
   background: var(--card);
