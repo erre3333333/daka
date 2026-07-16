@@ -123,15 +123,15 @@ const setMood = async (slotId, mood) => {
 <style scoped>
 .checkin-view {
   min-height: 100vh;
-  background: var(--bg);
   position: relative;
+  overflow: visible;
 }
 
 .floating-deco {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  position: fixed; inset: 0; pointer-events: none; z-index: 10; overflow: hidden;
 }
 .floating-deco .deco {
-  position: absolute; font-size: 22px; animation: floatDeco 10s infinite linear; opacity: 0.2;
+  position: absolute; font-size: 22px; animation: floatDeco 10s infinite linear; opacity: 0.35;
 }
 @keyframes floatDeco {
   0% { transform: translateY(100vh) rotate(0deg) scale(0.4); opacity: 0; }
