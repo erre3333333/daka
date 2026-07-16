@@ -1,22 +1,9 @@
 <template>
   <div class="app">
-    <!-- 浮动装饰 -->
-    <div class="floating-deco">
-      <div class="deco">🌸</div><div class="deco">💕</div><div class="deco">✨</div>
-      <div class="deco">🌷</div><div class="deco">💖</div><div class="deco">🌟</div>
-      <div class="deco">🌺</div><div class="deco">💫</div><div class="deco">🦋</div>
-      <div class="deco">🍭</div>
-    </div>
-
     <!-- 头部 -->
     <div class="header">
       <div class="greeting">{{ greeting }}</div>
       <div class="name">宝宝 <span>💕</span></div>
-      <div class="clock">
-        <span id="clockH">{{ hours }}</span>
-        <span class="clock-sep">:</span>
-        <span id="clockM">{{ minutes }}</span>
-      </div>
       <div class="rate-wrap">
         <div class="tip-text">{{ tipIcon }} {{ tipText }}</div>
         <div class="rate-row">
@@ -65,9 +52,6 @@ const tipIcon = ref('💪')
 const tipText = ref('今天也要元气满满哦！')
 const completionRate = computed(() => checkinStore.completionRate)
 
-const hours = computed(() => now.value.getHours().toString().padStart(2, '0'))
-const minutes = computed(() => now.value.getMinutes().toString().padStart(2, '0'))
-
 const greeting = computed(() => {
   const hour = now.value.getHours()
   if (hour < 6) return '夜深了宝宝，该睡啦 💤'
@@ -110,7 +94,7 @@ onMounted(async () => {
 
   timer = setInterval(() => {
     now.value = new Date()
-  }, 1000)
+  }, 60000)
 })
 
 onUnmounted(() => {
@@ -154,33 +138,11 @@ html { overflow-y: auto; }
 </style>
 
 <style scoped>
-.floating-deco {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
-}
 .app {
   min-height: 100vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-.floating-deco .deco {
-  position: absolute; font-size: 22px; animation: floatDeco 10s infinite linear; opacity: 0.2;
-}
-@keyframes floatDeco {
-  0% { transform: translateY(100vh) rotate(0deg) scale(0.4); opacity: 0; }
-  15% { opacity: 0.2; }
-  85% { opacity: 0.15; }
-  100% { transform: translateY(-15vh) rotate(720deg) scale(1.1); opacity: 0; }
-}
-.floating-deco .deco:nth-child(1) { left: 3%; animation-duration: 11s; animation-delay: 0s; font-size: 18px; }
-.floating-deco .deco:nth-child(2) { left: 12%; animation-duration: 10s; animation-delay: 2s; font-size: 26px; }
-.floating-deco .deco:nth-child(3) { left: 22%; animation-duration: 12s; animation-delay: 4s; font-size: 16px; }
-.floating-deco .deco:nth-child(4) { left: 35%; animation-duration: 9s; animation-delay: 1s; font-size: 24px; }
-.floating-deco .deco:nth-child(5) { left: 48%; animation-duration: 13s; animation-delay: 3s; font-size: 20px; }
-.floating-deco .deco:nth-child(6) { left: 58%; animation-duration: 10s; animation-delay: 5s; font-size: 22px; }
-.floating-deco .deco:nth-child(7) { left: 68%; animation-duration: 11s; animation-delay: 2s; font-size: 18px; }
-.floating-deco .deco:nth-child(8) { left: 78%; animation-duration: 12s; animation-delay: 0s; font-size: 26px; }
-.floating-deco .deco:nth-child(9) { left: 88%; animation-duration: 9s; animation-delay: 4s; font-size: 16px; }
-.floating-deco .deco:nth-child(10) { left: 95%; animation-duration: 11s; animation-delay: 3s; font-size: 20px; }
 
 .header {
   background: linear-gradient(135deg, #FFB5C2 0%, #FF8FAB 30%, #D4A5FF 70%, #A8E6CF 100%);
@@ -202,13 +164,6 @@ html { overflow-y: auto; }
   25% { transform: scale(1.2) rotate(-8deg); }
   75% { transform: scale(1.2) rotate(8deg); }
 }
-.header .clock {
-  font-size: 56px; font-weight: 400; letter-spacing: 6px;
-  font-variant-numeric: tabular-nums; text-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  line-height: 1.1;
-}
-.header .clock-sep { animation: twinkle 1s step-end infinite; display: inline-block; }
-@keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 .header .rate-wrap {
   display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 14px;
   background: rgba(255,255,255,0.3); backdrop-filter: blur(8px);
@@ -219,7 +174,12 @@ html { overflow-y: auto; }
 .header .rate-wrap .rate-row { display: flex; align-items: center; gap: 8px; }
 .header .rate-wrap .num { font-size: 20px; font-weight: 400; }
 
-.container { max-width: 480px; margin: 0 auto; padding: 16px; position: relative; z-index: 1; }
+.container {
+  max-width: 480px; margin: 0 auto; padding: 16px;
+  position: relative; z-index: 1;
+  overflow-y: auto; max-height: calc(100vh - 140px);
+  -webkit-overflow-scrolling: touch;
+}
 
 .tip-banner {
   background: linear-gradient(135deg, rgba(255,182,193,0.15), rgba(212,165,255,0.1));
