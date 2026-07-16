@@ -207,8 +207,17 @@ html, body, #app { height: 100%; margin: 0; padding: 0; }
 .header-deco-left { left: 14px; }
 .header-deco-right { right: 14px; }
 .header .title {
-  font-size: 20px; font-weight: 400; margin-bottom: 6px; letter-spacing: 2px;
-  text-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  font-family: 'Liu Jian Mao Cao', 'ZCOOL KuaiLe', cursive;
+  font-size: 26px; font-weight: 400; margin-bottom: 6px; letter-spacing: 2px;
+  background: linear-gradient(135deg, #fff 0%, #FFE4F0 50%, #fff 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  animation: titleBounce 3s ease-in-out infinite;
+}
+@keyframes titleBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-2px) rotate(-1deg); }
+  75% { transform: translateY(-2px) rotate(1deg); }
 }
 .header .greeting {
   font-size: 13px; opacity: 0.92; letter-spacing: 1.5px; margin-bottom: 2px;
