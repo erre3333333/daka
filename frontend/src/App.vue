@@ -44,20 +44,9 @@
       <button class="tab" :class="{ active: activeTab === 'weather' }" @click="switchTab('weather')">
         <span class="tab-icon">🌤</span> 天气
       </button>
-      <div class="mic-wrap">
-        <button class="mic-btn" :class="{ listening: isListening }" @click="toggleVoice">🎤</button>
-      </div>
       <button class="tab" :class="{ active: activeTab === 'settings' }" @click="switchTab('settings')">
         <span class="tab-icon">⚙️</span> 设置
       </button>
-    </div>
-
-    <!-- 语音弹窗 -->
-    <div class="voice-overlay" :class="{ show: isListening }">
-      <div class="wave">🎤</div>
-      <div class="v-text">{{ voiceText }}</div>
-      <div class="v-result">{{ voiceResult }}</div>
-      <div class="v-hint">点底部🎤按钮取消</div>
     </div>
   </div>
 </template>
@@ -74,9 +63,6 @@ const checkinStore = useCheckinStore()
 
 const now = ref(new Date())
 const activeTab = ref('checkin')
-const isListening = ref(false)
-const voiceText = ref('我在听呢...')
-const voiceResult = ref('')
 const tipIcon = ref('💪')
 const tipText = ref('今天也要元气满满哦！')
 const completionRate = computed(() => checkinStore.completionRate)
@@ -111,18 +97,6 @@ const tips = [
 const switchTab = (tab) => {
   activeTab.value = tab
   router.push(`/${tab === 'checkin' ? '' : tab}`)
-}
-
-const toggleVoice = () => {
-  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    alert('当前浏览器不支持语音识别\n请使用 Chrome 或 Edge 🥺')
-    return
-  }
-  isListening.value = !isListening.value
-  if (!isListening.value) {
-    voiceText.value = '我在听呢...'
-    voiceResult.value = ''
-  }
 }
 
 let timer = null
@@ -257,7 +231,7 @@ html { overflow-y: auto; }
   position: fixed; bottom: 0; left: 6px; right: 6px;
   background: rgba(255,255,255,0.92); backdrop-filter: blur(16px);
   box-shadow: 0 -2px 24px rgba(255,143,171,0.08);
-  display: flex; padding: 6px 8px calc(6px + var(--safe-bottom)); gap: 2px;
+  display: flex; padding: 6px 8px calc(6px + var(--safe-bottom)); gap: 4px;
   z-index: 20; align-items: center;
   border-radius: 28px 28px 0 0;
   border-top: 1.5px solid rgba(255,182,193,0.12);
@@ -273,47 +247,5 @@ html { overflow-y: auto; }
 .toolbar .tab.active .tab-icon { animation: tabBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
 @keyframes tabBounce {
   0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1.1); }
-}
-.toolbar .mic-wrap { position: relative; margin: -24px 4px; }
-.toolbar .mic-btn {
-  width: 60px; height: 60px; border-radius: 50%; border: 3px solid #fff;
-  background: linear-gradient(135deg, #FF8FAB, #D4A5FF);
-  color: #fff; font-size: 28px; cursor: pointer; flex-shrink: 0;
-  box-shadow: 0 4px 20px rgba(255,143,171,0.4); transition: all 0.2s;
-  display: flex; align-items: center; justify-content: center;
-}
-.toolbar .mic-btn:active { transform: scale(0.85); }
-.toolbar .mic-btn.listening { animation: glowPulse 1.2s infinite; }
-@keyframes glowPulse {
-  0% { box-shadow: 0 0 0 0 rgba(255,143,171,0.5); }
-  60% { box-shadow: 0 0 0 22px rgba(255,143,171,0); }
-  100% { box-shadow: 0 0 0 0 rgba(255,143,171,0); }
-}
-
-.voice-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(90,61,74,0.85); backdrop-filter: blur(14px);
-  z-index: 40; justify-content: center; align-items: center;
-  flex-direction: column; animation: softFade 0.25s ease;
-}
-.voice-overlay.show { display: flex; }
-@keyframes softFade { from { opacity: 0; } to { opacity: 1; } }
-.voice-overlay .wave {
-  width: 130px; height: 130px; border-radius: 50%;
-  background: linear-gradient(135deg, #FF8FAB, #D4A5FF);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 52px; margin-bottom: 24px;
-  animation: voiceWave 1.5s ease-in-out infinite;
-  box-shadow: 0 0 40px rgba(255,143,171,0.3);
-}
-@keyframes voiceWave {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255,143,171,0.5); transform: scale(1); }
-  50% { box-shadow: 0 0 0 28px rgba(255,143,171,0); transform: scale(1.05); }
-}
-.voice-overlay .v-text { color: #fff; font-size: 20px; font-weight: 400; text-align: center; padding: 0 24px; letter-spacing: 1px; }
-.voice-overlay .v-hint { color: rgba(255,255,255,0.45); font-size: 13px; margin-top: 16px; }
-.voice-overlay .v-result {
-  color: #FFD3B6; font-size: 16px; margin-top: 14px;
-  max-width: 80%; text-align: center; min-height: 24px;
 }
 </style>
