@@ -24,7 +24,8 @@
 
 body {
   font-family: 'ZCOOL KuaiLe', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
-  background: var(--bg);
+  background: linear-gradient(160deg, #FFF0F5 0%, #FFF8FA 30%, #F0E6FF 60%, #E8F5E9 100%);
+  background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
   padding-bottom: 90px;
@@ -94,4 +95,24 @@ body {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 16px;
+}
+
+/* 背景装饰气泡 */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
+body::before {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(255,182,193,0.2) 0%, transparent 70%);
+  top: -80px; right: -80px;
+}
+body::after {
+  width: 250px; height: 250px;
+  background: radial-gradient(circle, rgba(212,165,255,0.15) 0%, transparent 70%);
+  bottom: 100px; left: -60px;
 }
