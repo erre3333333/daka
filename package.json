@@ -6,7 +6,8 @@
     "start": "node server.js",
     "build": "cd frontend && npm install && npm run build && rm -rf ../public && cp -r dist ../public",
     "dev": "node --watch server.js",
-    "sync": "node sync.mjs"
+    "sync": "node sync.mjs",
+    "sync:watch": "node sync.mjs --watch"
   },
   "dependencies": {
     "express": "^4.18.0",
