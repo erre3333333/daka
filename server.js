@@ -52,15 +52,9 @@ if (count.c === 0) {
 }
 
 app.use(cors()); app.use(express.json())
+if (existsSync(PUBLIC_DIR)) app.use('/assets', express.static(join(PUBLIC_DIR, 'assets')))
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
-
-// Serve static files & SPA fallback
-if (existsSync(PUBLIC_DIR)) {
-  app.use('/assets', express.static(join(PUBLIC_DIR, 'assets')))
-  app.use(express.static(PUBLIC_DIR))
-  app.get('*', (req, res) => { if (!req.path.startsWith('/api')) res.sendFile(join(PUBLIC_DIR, 'index.html')) })
-}
+app.get('/api/health', (req, res) => res.json({ status: 'ok', version: '3.0.0' }))
 
 // Backup endpoint - returns database file
 app.get('/api/backup', (req, res) => {
@@ -210,5 +204,15 @@ app.post('/api/backup/trigger', async (req, res) => {
     res.status(500).json({ error: e.message })
   }
 })
+
+// Static files
+if (existsSync(PUBLIC_DIR)) {
+  app.use(express.static(PUBLIC_DIR))
+}
+
+// SPA Fallback
+if (existsSync(PUBLIC_DIR)) {
+  app.get('*', (req, res) => { if (!req.path.startsWith('/api')) res.sendFile(join(PUBLIC_DIR, 'index.html')) })
+}
 
 app.listen(PORT, () => console.log(`🌸 宝宝生活小助手 v3 已启动: http://localhost:${PORT}`))

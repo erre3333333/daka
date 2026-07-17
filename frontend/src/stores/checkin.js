@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { checkinApi } from '../api'
 
 export const useCheckinStore = defineStore('checkin', () => {
@@ -49,13 +49,20 @@ export const useCheckinStore = defineStore('checkin', () => {
     }
   }
 
+  const completionRate = computed(() => {
+    const done = checkins.value.filter(c => c.status === 'done').length
+    return checkins.value.length > 0 ? Math.round(done / checkins.value.length * 100) : 0
+  })
+
   return {
     checkins,
+    loading,
     fetchCheckins,
     doCheckin,
     cancelCheckin,
     getCheckinStatus,
     getMood,
-    setMood
+    setMood,
+    completionRate
   }
 })
