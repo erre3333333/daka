@@ -20,7 +20,6 @@
     <!-- 内容区 -->
     <div class="container">
       <router-view />
-      <BubbleEffect />
     </div>
 
     <!-- 底部导航 -->
@@ -59,7 +58,6 @@ import { ref, computed, onMounted, onUnmounted, provide, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useScheduleStore } from './stores/schedule'
 import { useCheckinStore } from './stores/checkin'
-import BubbleEffect from './components/BubbleEffect.vue'
 
 const router = useRouter()
 const route = useRoute()

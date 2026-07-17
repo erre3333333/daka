@@ -77,6 +77,7 @@
         </div>
       </div>
     </div>
+    <BubbleEffect />
   </div>
 </template>
 
@@ -84,6 +85,7 @@
 import { computed, inject } from 'vue'
 import { useScheduleStore } from '../stores/schedule'
 import { useCheckinStore } from '../stores/checkin'
+import BubbleEffect from '../components/BubbleEffect.vue'
 
 const scheduleStore = useScheduleStore()
 const checkinStore = useCheckinStore()

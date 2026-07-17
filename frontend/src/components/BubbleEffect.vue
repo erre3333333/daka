@@ -11,6 +11,10 @@ const COLORS = [
   'rgba(248,164,184', 'rgba(212,191,255', 'rgba(184,232,208', 'rgba(255,212,184'
 ]
 
+const SHAPES = [
+  'circle', 'heart', 'star', 'diamond', 'hexagon', 'clover', 'double-ring', 'dashed', 'wavy'
+]
+
 let animId = null
 let bubbles = []
 let particles = []
@@ -32,8 +36,131 @@ function createBubble(overrides = {}) {
     amp: rand(0.2, 0.6),
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     opacity: rand(0.12, 0.28),
+    shape: SHAPES[Math.floor(Math.random() * SHAPES.length)],
     alive: true,
     respawnTimer: 0
+  }
+}
+
+function drawShape(ctx, b) {
+  const { x, y, r, shape, color, opacity } = b
+  const s = `${color},${opacity})`
+  const s2 = `${color},${opacity * 0.4})`
+  ctx.strokeStyle = s
+  ctx.lineWidth = 1.5
+
+  switch (shape) {
+    case 'circle':
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke()
+      ctx.beginPath(); ctx.arc(x, y, r * 0.85, 0, Math.PI * 2)
+      ctx.strokeStyle = s2; ctx.lineWidth = 3; ctx.stroke()
+      break
+
+    case 'heart': {
+      const s = r * 0.8
+      ctx.beginPath()
+      ctx.moveTo(x, y + s * 0.3)
+      ctx.bezierCurveTo(x, y - s * 0.4, x - s, y - s * 0.3, x - s, y + s * 0.1)
+      ctx.bezierCurveTo(x - s, y + s * 0.6, x, y + s, x, y + s)
+      ctx.bezierCurveTo(x, y + s, x + s, y + s * 0.6, x + s, y + s * 0.1)
+      ctx.bezierCurveTo(x + s, y - s * 0.3, x, y - s * 0.4, x, y + s * 0.3)
+      ctx.stroke()
+      ctx.strokeStyle = s2; ctx.lineWidth = 3
+      ctx.stroke()
+      break
+    }
+
+    case 'star': {
+      ctx.beginPath()
+      for (let i = 0; i < 10; i++) {
+        const a = (i * Math.PI * 2) / 10 - Math.PI / 2
+        const rad = i % 2 === 0 ? r : r * 0.45
+        const px = x + Math.cos(a) * rad
+        const py = y + Math.sin(a) * rad
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
+      }
+      ctx.closePath(); ctx.stroke()
+      break
+    }
+
+    case 'diamond': {
+      ctx.beginPath()
+      ctx.moveTo(x, y - r); ctx.lineTo(x + r, y)
+      ctx.lineTo(x, y + r); ctx.lineTo(x - r, y)
+      ctx.closePath(); ctx.stroke()
+      // inner
+      ctx.beginPath()
+      ctx.moveTo(x, y - r * 0.7); ctx.lineTo(x + r * 0.7, y)
+      ctx.lineTo(x, y + r * 0.7); ctx.lineTo(x - r * 0.7, y)
+      ctx.closePath(); ctx.strokeStyle = s2; ctx.lineWidth = 3; ctx.stroke()
+      break
+    }
+
+    case 'hexagon': {
+      ctx.beginPath()
+      for (let i = 0; i < 6; i++) {
+        const a = (i * Math.PI * 2) / 6 - Math.PI / 6
+        const px = x + Math.cos(a) * r
+        const py = y + Math.sin(a) * r
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
+      }
+      ctx.closePath(); ctx.stroke()
+      break
+    }
+
+    case 'clover': {
+      ctx.beginPath()
+      for (let i = 0; i < 4; i++) {
+        const a = (i * Math.PI * 2) / 4
+        const cx = x + Math.cos(a) * r * 0.5
+        const cy = y + Math.sin(a) * r * 0.5
+        ctx.arc(cx, cy, r * 0.55, a - Math.PI * 0.6, a + Math.PI * 0.6)
+      }
+      ctx.stroke()
+      break
+    }
+
+    case 'double-ring':
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke()
+      ctx.beginPath(); ctx.arc(x, y, r * 0.5, 0, Math.PI * 2)
+      ctx.strokeStyle = s2; ctx.lineWidth = 1; ctx.stroke()
+      // connecting spokes
+      for (let i = 0; i < 6; i++) {
+        const a = (i * Math.PI * 2) / 6
+        ctx.beginPath()
+        ctx.moveTo(x + Math.cos(a) * r * 0.5, y + Math.sin(a) * r * 0.5)
+        ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r)
+        ctx.strokeStyle = s; ctx.lineWidth = 0.5; ctx.stroke()
+      }
+      break
+
+    case 'dashed': {
+      const segments = 20 + Math.floor(rand(0, 12))
+      for (let i = 0; i < segments; i++) {
+        const a1 = (i / segments) * Math.PI * 2
+        const a2 = ((i + 0.5) / segments) * Math.PI * 2
+        ctx.beginPath()
+        ctx.arc(x, y, r, a1, a2)
+        ctx.strokeStyle = i % 2 === 0 ? s : 'transparent'
+        ctx.lineWidth = 1.5
+        ctx.stroke()
+      }
+      break
+    }
+
+    case 'wavy': {
+      ctx.beginPath()
+      const steps = 36
+      for (let i = 0; i <= steps; i++) {
+        const a = (i / steps) * Math.PI * 2
+        const wave = Math.sin(i * 4) * r * 0.08
+        const px = x + Math.cos(a) * (r + wave)
+        const py = y + Math.sin(a) * (r + wave)
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
+      }
+      ctx.closePath(); ctx.stroke()
+      break
+    }
   }
 }
 
@@ -63,15 +190,16 @@ function checkCollisions() {
       const dx = a.x - b.x
       const dy = a.y - b.y
       const dist = Math.sqrt(dx * dx + dy * dy)
-      if (dist < a.r + b.r) {
+      // need deeper overlap to pop (0.55 instead of 1.0)
+      if (dist < (a.r + b.r) * 0.55) {
         const mx = (a.x + b.x) / 2
         const my = (a.y + b.y) / 2
         spawnParticles(mx, my, a.color)
         spawnParticles(mx, my, b.color)
         a.alive = false
         b.alive = false
-        a.respawnTimer = 60
-        b.respawnTimer = 80
+        a.respawnTimer = 120
+        b.respawnTimer = 150
       }
     }
   }
@@ -94,7 +222,7 @@ function update() {
     b.y += b.vy
     if (b.y + b.r < -20) {
       b.alive = false
-      b.respawnTimer = rand(20, 60)
+      b.respawnTimer = rand(40, 100)
     }
     if (b.x - b.r > w + 20) b.vx = -Math.abs(b.vx)
     if (b.x + b.r < -20) b.vx = Math.abs(b.vx)
@@ -114,17 +242,7 @@ function draw(ctx) {
 
   for (const b of bubbles) {
     if (!b.alive) continue
-    ctx.beginPath()
-    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2)
-    ctx.strokeStyle = `${b.color},${b.opacity})`
-    ctx.lineWidth = 1.5
-    ctx.stroke()
-    // inner glow
-    ctx.beginPath()
-    ctx.arc(b.x, b.y, b.r * 0.85, 0, Math.PI * 2)
-    ctx.strokeStyle = `${b.color},${b.opacity * 0.4})`
-    ctx.lineWidth = 3
-    ctx.stroke()
+    drawShape(ctx, b)
   }
 
   for (const p of particles) {
@@ -156,7 +274,7 @@ onMounted(() => {
   const ctx = canvas.getContext('2d')
   resize()
   window.addEventListener('resize', resize)
-  bubbles = Array.from({ length: 10 }, () => createBubble())
+  bubbles = Array.from({ length: 8 }, () => createBubble())
   loop(ctx)
 })
 
