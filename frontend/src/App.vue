@@ -91,19 +91,6 @@ const greeting = computed(() => {
   return '晚安 🌙 要早点休息哦'
 })
 
-const tips = [
-  { icon: '💖', text: '和你在一起的每一天都是礼物' },
-  { icon: '☀️', text: '醒来想到你，空气都是甜的' },
-  { icon: '🌸', text: '你比春天还温柔' },
-  { icon: '🌟', text: '我的世界因为有你会发光' },
-  { icon: '🎀', text: '你这么可爱，一定是吃可爱多长大的' },
-  { icon: '💝', text: '心都被你填满了' },
-  { icon: '🦋', text: '你一出现，连风都是甜的' },
-  { icon: '🍯', text: '你是生活给我的糖' },
-  { icon: '🌷', text: '在我眼里你永远最好看' },
-  { icon: '✨', text: '你的存在就是我的小确幸' },
-]
-
 const tabTips = {
   checkin: [
     { icon: '💪', text: '今天也要元气满满哦！' },
@@ -143,9 +130,9 @@ onMounted(async () => {
   const date = now.value.toISOString().slice(0, 10)
   await checkinStore.fetchCheckins(date)
 
-  const randomTip = tips[Math.floor(Math.random() * tips.length)]
-  tipIcon.value = randomTip.icon
-  tipText.value = randomTip.text
+  const t = tabTips.checkin[Math.floor(Math.random() * tabTips.checkin.length)]
+  tipIcon.value = t.icon
+  tipText.value = t.text
 
   timer = setInterval(() => {
     now.value = new Date()

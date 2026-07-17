@@ -2,26 +2,7 @@
   <div class="checkin-view">
     <!-- 浮动装饰 -->
     <div class="floating-deco">
-      <div class="deco heart fall">❤️</div>
-      <div class="deco flower rise">🌸</div>
-      <div class="deco heart fall">💗</div>
-      <div class="deco snow fall">❄️</div>
-      <div class="deco heart rise">💖</div>
-      <div class="deco flower fall">🌷</div>
-      <div class="deco heart fall">💕</div>
-      <div class="deco snow rise">❅</div>
-      <div class="deco heart rise">💝</div>
-      <div class="deco flower fall">🎀</div>
-      <div class="deco heart fall">❣️</div>
-      <div class="deco snow fall">❆</div>
-      <div class="deco heart rise">🩷</div>
-      <div class="deco flower rise">🌺</div>
-      <div class="deco heart fall">♥️</div>
-      <div class="deco snow fall">❄️</div>
-      <div class="deco heart rise">💓</div>
-      <div class="deco flower fall">🍭</div>
-      <div class="deco snow rise">❅</div>
-      <div class="deco heart fall">💕</div>
+      <div v-for="item in decos" :key="item.id" class="deco" :class="[item.type, item.dir]">{{ item.emoji }}</div>
     </div>
 
     <div class="card" v-if="schedules.length === 0">
@@ -92,6 +73,19 @@ const checkinStore = useCheckinStore()
 const updateTip = inject('updateTip')
 
 const moods = ['😞', '😐', '😊', '😄', '🥰']
+
+const decos = [
+  { id:1,emoji:'❤️',type:'heart',dir:'fall' }, { id:2,emoji:'🌸',type:'flower',dir:'rise' },
+  { id:3,emoji:'💗',type:'heart',dir:'fall' }, { id:4,emoji:'❄️',type:'snow',dir:'fall' },
+  { id:5,emoji:'💖',type:'heart',dir:'rise' }, { id:6,emoji:'🌷',type:'flower',dir:'fall' },
+  { id:7,emoji:'💕',type:'heart',dir:'fall' }, { id:8,emoji:'❅',type:'snow',dir:'rise' },
+  { id:9,emoji:'💝',type:'heart',dir:'rise' }, { id:10,emoji:'🎀',type:'flower',dir:'fall' },
+  { id:11,emoji:'❣️',type:'heart',dir:'fall' }, { id:12,emoji:'❆',type:'snow',dir:'fall' },
+  { id:13,emoji:'🩷',type:'heart',dir:'rise' }, { id:14,emoji:'🌺',type:'flower',dir:'rise' },
+  { id:15,emoji:'♥️',type:'heart',dir:'fall' }, { id:16,emoji:'❄️',type:'snow',dir:'fall' },
+  { id:17,emoji:'💓',type:'heart',dir:'rise' }, { id:18,emoji:'🍭',type:'flower',dir:'fall' },
+  { id:19,emoji:'❅',type:'snow',dir:'rise' }, { id:20,emoji:'💕',type:'heart',dir:'fall' },
+]
 
 const scheduleIcons = {
   wake: '☀️', breakfast: '🥐', lunch: '🍚', nap: '😴',
