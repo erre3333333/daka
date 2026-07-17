@@ -76,37 +76,6 @@ function drawShape(ctx, b) {
     }
   }
 }
-      break
-
-    case 'dashed': {
-      const segments = 20 + Math.floor(rand(0, 12))
-      for (let i = 0; i < segments; i++) {
-        const a1 = (i / segments) * Math.PI * 2
-        const a2 = ((i + 0.5) / segments) * Math.PI * 2
-        ctx.beginPath()
-        ctx.arc(x, y, r, a1, a2)
-        ctx.strokeStyle = i % 2 === 0 ? s : 'transparent'
-        ctx.lineWidth = 1.5
-        ctx.stroke()
-      }
-      break
-    }
-
-    case 'wavy': {
-      ctx.beginPath()
-      const steps = 36
-      for (let i = 0; i <= steps; i++) {
-        const a = (i / steps) * Math.PI * 2
-        const wave = Math.sin(i * 4) * r * 0.08
-        const px = x + Math.cos(a) * (r + wave)
-        const py = y + Math.sin(a) * (r + wave)
-        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
-      }
-      ctx.closePath(); ctx.stroke()
-      break
-    }
-  }
-}
 
 function spawnParticles(x, y, color) {
   for (let i = 0; i < 20; i++) {
