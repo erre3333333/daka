@@ -20,6 +20,7 @@ let bubbles = []
 let particles = []
 let w = 0
 let h = 0
+let frameCount = 0
 
 function rand(a, b) { return a + Math.random() * (b - a) }
 
@@ -191,7 +192,7 @@ function checkCollisions() {
       const dy = a.y - b.y
       const dist = Math.sqrt(dx * dx + dy * dy)
       // need deeper overlap to pop (0.55 instead of 1.0)
-      if (dist < (a.r + b.r) * 0.55) {
+      if (dist < (a.r + b.r) * 0.25) {
         const mx = (a.x + b.x) / 2
         const my = (a.y + b.y) / 2
         spawnParticles(mx, my, a.color)
@@ -206,7 +207,8 @@ function checkCollisions() {
 }
 
 function update() {
-  checkCollisions()
+  frameCount++
+  if (frameCount % 6 === 0) checkCollisions()
 
   for (const b of bubbles) {
     if (!b.alive) {
