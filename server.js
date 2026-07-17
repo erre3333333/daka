@@ -24,6 +24,39 @@ if (existsSync(DB_PATH)) {
 
 function saveDb() { writeFileSync(DB_PATH, Buffer.from(db.export())) }
 
+const GIT_REPO = 'erre3333333/daka'
+const GIT_TOKEN = process.env.GITHUB_TOKEN
+
+async function doBackup() {
+  if (!GIT_TOKEN) return { ok: false, error: 'GITHUB_TOKEN not configured' }
+  const now = new Date()
+  const ts = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`
+  const backupPath = `backup/life-${ts}.db`
+  const h = { Authorization: 'token ' + GIT_TOKEN, 'User-Agent': 'node', 'Content-Type': 'application/json' }
+  const b64 = readFileSync(DB_PATH).toString('base64')
+
+  const refRes = await fetch(`https://api.github.com/repos/${GIT_REPO}/git/refs/heads/main`, { headers: h })
+  const commitSha = (await refRes.json()).object.sha
+  const treeSha = (await (await fetch(`https://api.github.com/repos/${GIT_REPO}/git/commits/${commitSha}`, { headers: h })).json()).tree.sha
+  const blobSha = (await (await fetch(`https://api.github.com/repos/${GIT_REPO}/git/blobs`, { method:'POST', headers:h, body:JSON.stringify({ content:b64, encoding:'base64' }) })).json()).sha
+  const newTree = (await (await fetch(`https://api.github.com/repos/${GIT_REPO}/git/trees`, { method:'POST', headers:h, body:JSON.stringify({ base_tree:treeSha, tree:[{ path:backupPath, mode:'100644', type:'blob', sha:blobSha }] }) })).json()).sha
+  const newCommit = (await (await fetch(`https://api.github.com/repos/${GIT_REPO}/git/commits`, { method:'POST', headers:h, body:JSON.stringify({ message:`chore: backup ${now.toISOString().slice(0,10)}`, tree:newTree, parents:[commitSha] }) })).json()).sha
+  await fetch(`https://api.github.com/repos/${GIT_REPO}/git/refs/heads/main`, { method:'PATCH', headers:h, body:JSON.stringify({ sha:newCommit, force:true }) })
+
+  // Tag
+  const tag = `backup-${ts}`
+  await fetch(`https://api.github.com/repos/${GIT_REPO}/git/refs`, { method:'POST', headers:h, body:JSON.stringify({ ref:`refs/tags/${tag}`, sha:newCommit }) }).catch(() => {})
+
+  console.log(`Backup: ${backupPath} (${newCommit.slice(0,8)}) tag: ${tag}`)
+  return { ok: true, path: backupPath, commit: newCommit.slice(0, 8), tag }
+}
+
+// Auto backup on startup + every 6 hours
+if (GIT_TOKEN) {
+  setTimeout(() => doBackup().catch(() => {}), 10000)
+  setInterval(() => doBackup().catch(() => {}), 6 * 60 * 60 * 1000)
+}
+
 db.run(`CREATE TABLE IF NOT EXISTS schedules (
   id TEXT PRIMARY KEY, label TEXT NOT NULL, hour INTEGER NOT NULL,
   minute INTEGER NOT NULL, enabled INTEGER NOT NULL DEFAULT 1
@@ -146,60 +179,10 @@ app.post('/api/ai/analyze', (req, res) => {
 
 // Backup trigger - push database to GitHub
 app.post('/api/backup/trigger', async (req, res) => {
-  const GITHUB_TOKEN = process.env.GITHUB_TOKEN
-  const REPO = 'erre3333333/daka'
-  if (!GITHUB_TOKEN) return res.status(500).json({ error: 'GITHUB_TOKEN not configured' })
-  if (!existsSync(DB_PATH)) return res.status(404).json({ error: 'no database' })
-
   try {
-    const now = new Date()
-    const ts = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`
-    const backupPath = `backup/life-${ts}.db`
-    const dbContent = readFileSync(DB_PATH)
-    const b64 = dbContent.toString('base64')
-
-    const headers = { Authorization: 'token ' + GITHUB_TOKEN, 'User-Agent': 'node', 'Content-Type': 'application/json' }
-
-    // Get current commit and tree
-    const refRes = await fetch(`https://api.github.com/repos/${REPO}/git/refs/heads/main`, { headers })
-    const commitSha = (await refRes.json()).object.sha
-    const commitRes = await fetch(`https://api.github.com/repos/${REPO}/git/commits/${commitSha}`, { headers })
-    const treeSha = (await commitRes.json()).tree.sha
-
-    // Create blob
-    const blobRes = await fetch(`https://api.github.com/repos/${REPO}/git/blobs`, {
-      method: 'POST', headers,
-      body: JSON.stringify({ content: b64, encoding: 'base64' })
-    })
-    const blobSha = (await blobRes.json()).sha
-
-    // Create tree
-    const treeRes = await fetch(`https://api.github.com/repos/${REPO}/git/trees`, {
-      method: 'POST', headers,
-      body: JSON.stringify({
-        base_tree: treeSha,
-        tree: [{ path: backupPath, mode: '100644', type: 'blob', sha: blobSha }]
-      })
-    })
-    const newTree = (await treeRes.json()).sha
-
-    // Create commit
-    const cRes = await fetch(`https://api.github.com/repos/${REPO}/git/commits`, {
-      method: 'POST', headers,
-      body: JSON.stringify({
-        message: `chore: database backup ${now.toISOString().slice(0,10)}`,
-        tree: newTree, parents: [commitSha]
-      })
-    })
-    const newCommit = (await cRes.json()).sha
-
-    // Update ref
-    await fetch(`https://api.github.com/repos/${REPO}/git/refs/heads/main`, {
-      method: 'PATCH', headers,
-      body: JSON.stringify({ sha: newCommit, force: true })
-    })
-
-    res.json({ ok: true, path: backupPath, commit: newCommit.slice(0, 8) })
+    const r = await doBackup()
+    if (!r.ok) return res.status(500).json(r)
+    res.json(r)
   } catch (e) {
     res.status(500).json({ error: e.message })
   }
