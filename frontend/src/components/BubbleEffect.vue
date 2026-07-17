@@ -11,9 +11,7 @@ const COLORS = [
   'rgba(248,164,184', 'rgba(212,191,255', 'rgba(184,232,208', 'rgba(255,212,184'
 ]
 
-const SHAPES = [
-  'circle', 'heart', 'star', 'diamond', 'hexagon', 'clover', 'double-ring', 'dashed', 'wavy'
-]
+const SHAPES = ['heart', 'clover']
 
 let animId = null
 let bubbles = []
@@ -51,12 +49,6 @@ function drawShape(ctx, b) {
   ctx.lineWidth = 1.5
 
   switch (shape) {
-    case 'circle':
-      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke()
-      ctx.beginPath(); ctx.arc(x, y, r * 0.85, 0, Math.PI * 2)
-      ctx.strokeStyle = s2; ctx.lineWidth = 3; ctx.stroke()
-      break
-
     case 'heart': {
       const s = r * 0.8
       ctx.beginPath()
@@ -71,44 +63,6 @@ function drawShape(ctx, b) {
       break
     }
 
-    case 'star': {
-      ctx.beginPath()
-      for (let i = 0; i < 10; i++) {
-        const a = (i * Math.PI * 2) / 10 - Math.PI / 2
-        const rad = i % 2 === 0 ? r : r * 0.45
-        const px = x + Math.cos(a) * rad
-        const py = y + Math.sin(a) * rad
-        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
-      }
-      ctx.closePath(); ctx.stroke()
-      break
-    }
-
-    case 'diamond': {
-      ctx.beginPath()
-      ctx.moveTo(x, y - r); ctx.lineTo(x + r, y)
-      ctx.lineTo(x, y + r); ctx.lineTo(x - r, y)
-      ctx.closePath(); ctx.stroke()
-      // inner
-      ctx.beginPath()
-      ctx.moveTo(x, y - r * 0.7); ctx.lineTo(x + r * 0.7, y)
-      ctx.lineTo(x, y + r * 0.7); ctx.lineTo(x - r * 0.7, y)
-      ctx.closePath(); ctx.strokeStyle = s2; ctx.lineWidth = 3; ctx.stroke()
-      break
-    }
-
-    case 'hexagon': {
-      ctx.beginPath()
-      for (let i = 0; i < 6; i++) {
-        const a = (i * Math.PI * 2) / 6 - Math.PI / 6
-        const px = x + Math.cos(a) * r
-        const py = y + Math.sin(a) * r
-        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)
-      }
-      ctx.closePath(); ctx.stroke()
-      break
-    }
-
     case 'clover': {
       ctx.beginPath()
       for (let i = 0; i < 4; i++) {
@@ -120,19 +74,8 @@ function drawShape(ctx, b) {
       ctx.stroke()
       break
     }
-
-    case 'double-ring':
-      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke()
-      ctx.beginPath(); ctx.arc(x, y, r * 0.5, 0, Math.PI * 2)
-      ctx.strokeStyle = s2; ctx.lineWidth = 1; ctx.stroke()
-      // connecting spokes
-      for (let i = 0; i < 6; i++) {
-        const a = (i * Math.PI * 2) / 6
-        ctx.beginPath()
-        ctx.moveTo(x + Math.cos(a) * r * 0.5, y + Math.sin(a) * r * 0.5)
-        ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r)
-        ctx.strokeStyle = s; ctx.lineWidth = 0.5; ctx.stroke()
-      }
+  }
+}
       break
 
     case 'dashed': {
